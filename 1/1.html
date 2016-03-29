@@ -1,0 +1,27 @@
+<p><meta charset="utf-8"> <link rel='stylesheet' href='http://dmoraes.org/md.css'/></p>
+<h1 id="clrs-solutions-chapter-1">CLRS Solutions (Chapter 1)</h1>
+<h2 id="algorithms">1.1 Algorithms</h2>
+<ol style="list-style-type: decimal">
+<li><p><strong>Give a real-world example that requires sorting or a real-world example that requires computing a convex hull.</strong></p>
+<p><strong>Sorting.</strong> In a dictionary, it is essential to use sorting so that one can easily find the desired word.</p>
+<p><strong>Convex hull.</strong> After conducting a voting intention survey, it may be interesting to know its coverage area. One can calculate the aproximate area by projecting the covered cities to a two dimensional plane, obtain the <strong>convex hull</strong> of the projected cities, and then compute the approximate area of the convex hull.</p></li>
+<li><p><strong>Other than speed, what other measures of efficiency might one use in a real-world setting?</strong></p>
+<p>For algorithms in general, we can also optimize for low memory usage or low power consumption. In machine learning algorithms, accuracy (hit rate) is also considered a measure of efficiency.</p></li>
+<li><p><strong>Select a data structure that you have seen previously, and discuss its strengths and limitations.</strong></p>
+<p>Linked List is a basic data structure. Some of its <strong>strengths</strong> are:</p>
+<ul>
+<li>Given a pointer to an element in the list, we can insert an element after or before it in constant time.</li>
+<li>Given a pointer to an element in the list, we can delete it in constant time.</li>
+</ul>
+<p>Some of its <strong>limitations</strong> are:</p>
+<ul>
+<li>The pointers requires extra memory.</li>
+<li>Since it only has pointers to the next element, it takes linear time to retrieve the i-th element.</li>
+</ul></li>
+<li><p><strong>How are the shortest-path and traveling-salesman problems given above similar? How are they different?</strong></p>
+<p>They are similar because both of them aims at minimizing the distance between A and B, given a set of possible valid paths. However, the traveling-salesman problem has an additional constraint: for a path to be valid, besides starting in A and ending in B, it also needs to pass through a set of other points C, D, ..., E before reaching B.</p></li>
+<li><p><strong>Come up with a real-world problem in which only the best solution will do. Then come up with one in which a solution that is &quot;approximately&quot; the best is good enough.</strong></p>
+<p>In a competition, each candidate received a score for her/his performance. To obtain the ranking list of the candidates, only the best sorting solution is accepted. Approximated sorting algorithms are not feasible in this situation.</p>
+<p>Recently, Facebook computed the approximate degree of separation between every two people in the world. Since Facebook has billion of users, it would take too long to return the solution that take into account all the connections between all the users. Also, an approximate result is very feasible in this case. They then used an approximate to get the result of 3.57.</p></li>
+</ol>
+<h2 id="algorithms-as-a-technology">1.2 Algorithms as a technology</h2>
