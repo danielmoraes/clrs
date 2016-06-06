@@ -3,3 +3,4 @@ make
 *.tex
 *.log
 *.aux
+*.html
