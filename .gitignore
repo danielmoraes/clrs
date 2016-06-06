@@ -1,5 +1,5 @@
+make
 *.sty
 *.tex
 *.log
 *.aux
-*.sh
