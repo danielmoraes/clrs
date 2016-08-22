@@ -26,7 +26,7 @@ Completed topics are in **bold**. Topics currently being solved are in *italic*.
 20. All-Pairs Shortest Paths (25.1-25.3)
 21. **Appendix A - Summations** (A.1-A.2)
 22. *Appendix B - Sets, Etc* (B.1-B.5)
-23. Appendix C - Counting and Probability (C.1-C.4)
+23. *Appendix C - Counting and Probability* (C.1-C.4)
 24. Appendix D - Matrices (D.1-D.2)
 
 ## MIT License
