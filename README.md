@@ -2,13 +2,13 @@
 
 ## Selected Topics
 
-Completed topics are in **bold**. Topics currently being solved are in *italic*.
+Completed topics are ~~scratched~~. Topics currently being solved are in **bold**.
 
-1. **The role of algorithms in computing** (1.1-1.2)
-2. **Getting started** (2.1-2.3)
-3. **Growth of functions** (3.1-3.2)
-4. **Divide-and-Conquer** (4.1-4.5)
-5. *Probabilist Analysis and Randomized Algorithms* (5.1-5.3)
+1. ~~The role of algorithms in computing~~ (1.1-1.2)
+2. ~~Getting started~~ (2.1-2.3)
+3. ~~Growth of functions~~ (3.1-3.2)
+4. ~~Divide-and-Conquer~~ (4.1-4.5)
+5. **Probabilist Analysis and Randomized Algorithms** (5.1-5.3)
 6. Heapsort (6.1-6.5)
 7. Quicksort (7.1-7.4)
 8. Sorting in Linear Time (8.1-8.4)
@@ -24,9 +24,9 @@ Completed topics are in **bold**. Topics currently being solved are in *italic*.
 18. Minimum Spanning Trees (23.1-23.2)
 19. Single-Source Shortest Paths (24.1-24.5)
 20. All-Pairs Shortest Paths (25.1-25.3)
-21. **Appendix A - Summations** (A.1-A.2)
-22. *Appendix B - Sets, Etc* (B.1-B.5)
-23. *Appendix C - Counting and Probability* (C.1-C.4)
+21. ~~Appendix A - Summations~~ (A.1-A.2)
+22. **Appendix B - Sets, Etc** (B.1-B.5)
+23. **Appendix C - Counting and Probability** (C.1-C.4)
 24. Appendix D - Matrices (D.1-D.2)
 
 ## MIT License
