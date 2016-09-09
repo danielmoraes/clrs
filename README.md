@@ -2,7 +2,7 @@
 
 ## Selected Topics
 
-Completed topics are ~~scratched~~. Topics currently being solved are in **bold**.
+Completed topics are ~~scratched~~. Topics partially or currently being solved are in **bold**.
 
 1. ~~The role of algorithms in computing~~ (1.1-1.2)
 2. ~~Getting started~~ (2.1-2.3)
