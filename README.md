@@ -8,8 +8,8 @@ Completed topics are ~~scratched~~. Topics partially or currently being solved a
 2. ~~Getting started~~ (2.1-2.3)
 3. ~~Growth of functions~~ (3.1-3.2)
 4. ~~Divide-and-Conquer~~ (4.1-4.5)
-5. **Probabilist Analysis and Randomized Algorithms** (5.1-5.3)
-6. Heapsort (6.1-6.5)
+5. ~~Probabilist Analysis and Randomized Algorithms~~ (5.1-5.3)
+6. **Heapsort (6.1-6.5)**
 7. Quicksort (7.1-7.4)
 8. Sorting in Linear Time (8.1-8.4)
 9. Medians and Order Statistics (9.1-9.3)
