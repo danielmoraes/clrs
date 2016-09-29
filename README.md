@@ -26,9 +26,9 @@ Completed topics are ~~scratched~~. Topics partially or currently being solved a
 20. All-Pairs Shortest Paths (25.1-25.3)
 21. ~~Appendix A - Summations~~ (A.1-A.2)
 22. ~~Appendix B - Sets, Etc~~ (B.1-B.5)
-    * Sections B.4 and B.5 were postponed.
+    * B.4 and B.5 were postponed.
 23. ~~Appendix C - Counting and Probability~~ (C.1-C.4)
-    * Section C.4 was postponed.
+    * C.4 was postponed.
 24. Appendix D - Matrices (D.1-D.2)
 
 ## MIT License
