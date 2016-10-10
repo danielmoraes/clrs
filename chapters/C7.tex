@@ -1,0 +1,255 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 7 {--} Quicksort}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\tikzset{every tree node/.style={minimum width=1.95em,draw,circle,font=\footnotesize},
+         blank/.style={draw=none},
+         edge from parent/.style=
+         {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
+         level distance=1cm}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 7.1 {--} Description of quicksort}
+
+\begin{enumerate}
+
+\item[7.1{-}1]{Using Figure 7.1 as a model, illustrate the operation of
+\textsc{Partition} on the array
+$A = \langle 13, 19, 9, 5, 12, 8, 7, 4, 21, 2, 6, 11 \rangle$.}
+
+\begin{framed}
+{\centering $ \displaystyle
+\definecolor{l}{gray}{0.9}
+\definecolor{d}{gray}{0.8}
+\definecolor{w}{HTML}{FFFFFF}
+\begin{aligned}
+  \colorbox{w}{\makebox[1em]{13}} \colorbox{w}{\makebox[1em]{19}} \colorbox{w}{\makebox[1em]{9}}
+  \colorbox{w}{\makebox[1em]{5}}  \colorbox{w}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{d}{\makebox[1em]{13}} \colorbox{w}{\makebox[1em]{19}} \colorbox{w}{\makebox[1em]{9}}
+  \colorbox{w}{\makebox[1em]{5}}  \colorbox{w}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{d}{\makebox[1em]{13}} \colorbox{d}{\makebox[1em]{19}} \colorbox{w}{\makebox[1em]{9}}
+  \colorbox{w}{\makebox[1em]{5}}  \colorbox{w}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}} \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{w}{\makebox[1em]{5}} \colorbox{w}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}} \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}} \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{w}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{8}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{w}{\makebox[1em]{7}}  \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{w}{\makebox[1em]{4}}  \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{12}} \colorbox{w}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{d}{\makebox[1em]{13}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{21}}
+  \colorbox{w}{\makebox[1em]{2}}  \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{l}{\makebox[1em]{2}}
+  \colorbox{d}{\makebox[1em]{19}} \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{21}}
+  \colorbox{d}{\makebox[1em]{13}} \colorbox{w}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{l}{\makebox[1em]{2}}
+  \colorbox{l}{\makebox[1em]{6}} \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{21}}
+  \colorbox{d}{\makebox[1em]{13}} \colorbox{d}{\makebox[1em]{19}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
+%
+  \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
+  \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{l}{\makebox[1em]{2}}
+  \colorbox{l}{\makebox[1em]{6}}
+  \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}
+  \colorbox{d}{\makebox[1em]{21}} \colorbox{d}{\makebox[1em]{13}} \colorbox{d}{\makebox[1em]{19}}
+  \colorbox{d}{\makebox[1em]{12}}\\
+\end{aligned} $ \par} % Necessary for centering to work
+\end{framed}
+
+\item[7.1{-}2]{What value of $q$ does \textsc{Partition} return when all
+elements in the array $A=[p, \dots, r]$ have the same value? Modify
+\textsc{Partition} so that $q = \floor{(p + r) / 2}$ when all elements in the
+array $A[p, \dots, r]$ have the same value.}
+
+\begin{framed}
+It will return $q = r$. We can update \textsc{Partition} to split elements that
+are equal to the pivot on both sides as follows:
+\begin{enumerate}
+\item Count the number of elements $y$ such that $y = x$ and set this value to $c$;
+\item Subtract the final pivot index by $\floor{c/2}$.
+\end{enumerate}
+
+The updated pseucode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Partition-Improved}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A, p, r}}{%
+\nl $x = A[r]$\;
+\nl $i = p - 1$\;
+\nl $c = 0$\;
+\nl \For{$j = p$ \KwTo $r - 1$}{%
+\nl   \If{$A[j] \le x$}{%
+\nl     \If{$A[j] == x$}{%
+\nl       $c = c + 1$\; }
+\nl     $i = i + 1$\;
+\nl     \upshape{exchange} $A[i]$ \upshape{with} $A[j]$\; } }
+\nl \upshape{exchange} $A[i + 1]$ \upshape{with} $A[r]$\;
+\nl \Return{$(i + 1) - \floor{c/2}$}\; }
+\end{algorithm}
+\end{framed}
+
+\item[7.1{-}3]{Give a brief argument that the running time of \textsc{Partition}
+on a subarray of size $n$ if $\Theta(n)$.}
+
+\begin{framed}
+The \textbf{for} loop of lines $3{-}6$ iterates $n - 1$ times and each
+iteration does a constant amount of work. Thus, it is $O(n)$.
+\end{framed}
+
+\item[7.1{-}4]{How would you modify \textsc{Quicksort} to sort into
+nonincreasing order?}
+
+\begin{framed}
+We just need to update the condition
+\[
+  A[j] \le x,
+\]
+to
+\[
+  A[j] \ge x.
+\]
+\end{framed}
+
+\end{enumerate}
+
+\end{document}
