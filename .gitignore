@@ -1,8 +1,5 @@
-make
 drafts
-images
 *.sty
-*.tex
 *.log
 *.aux
 *.html

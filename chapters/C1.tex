@@ -1,0 +1,244 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english,brazil,brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{algorithmic}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 1 {--} The Role of Algorithms in Computing}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 1.1 {--} Algorithms}
+
+\begin{enumerate}
+
+\item[1.1{-}1] Give a real-world example that requires sorting or
+  a real-world example that requires computing a convex hull.
+
+\begin{framed}
+Sorting. In a dictionary, it is essential to use sorting so that one
+can easily find the desired word.
+
+Convex hull. After conducting a voting intention survey, it may be
+interesting to know its coverage area. One can calculate the aproximate area by
+projecting the covered cities to a two dimensional plane, obtain the convex hull
+of the projected cities, and then compute the approximate area of the convex
+hull.
+\end{framed}
+
+\item[1.1{-}2] Other than speed, what other measures of efficiency might
+  one use in a real-world setting?
+
+\begin{framed}
+For algorithms in general, we can also optimize for low memory usage or low
+power consumption. In machine learning algorithms, accuracy (hit rate) is also
+considered a measure of efficiency.
+\end{framed}
+
+\item[1.1{-}3] Select a data structure that you have seen previously,
+  and discuss its strengths and limitations.
+
+\begin{framed}
+Linked List is a basic data structure. Some of its strengths are:
+
+\begin{itemize}
+\item Given a pointer to an element in the list, we can insert an element after
+  or before it in constant time.
+\item Given a pointer to an element in the list, we can delete it in constant
+  time.
+\end{itemize}
+
+Some of its limitations are:
+
+\begin{itemize}
+\item The pointers requires extra memory.
+\item Since it only has pointers to the next element, it takes linear time to
+  retrieve the i-th element.
+\end{itemize}
+\end{framed}
+
+\item[1.1{-}4] How are the shortest-path and traveling-salesman problems
+  given above similar? How are they different?
+
+\begin{framed}
+They are similar because both of them aims at minimizing the distance between
+A and B, given a set of possible valid paths. However, the traveling-salesman
+problem has an additional constraint: for a path to be valid, besides starting
+in A and ending in B, it also needs to pass through a set of other points C, D,
+\ldots, E before reaching B.
+\end{framed}
+
+\item[1.1{-}5] Come up with a real-world problem in which only the best
+  solution will do. Then come up with one in which a solution that is
+  ``approximately'' the best is good enough.
+
+\begin{framed}
+In a competition, each candidate received a score for her/his performance. To
+obtain the ranking list of the candidates, only the best sorting solution is
+accepted. Approximated sorting algorithms are not feasible in this situation.
+
+Recently, Facebook computed the approximate degree of separation between every
+two people in the world. Since Facebook has billion of users, it would take too
+long to compute the solution that takes into account all the connections between
+all the users. Also, an approximate result is very feasible in this case. They
+then used an approximate to get the result of 3.57.
+\end{framed}
+
+\end{enumerate}
+
+\pagebreak
+
+{\large Section 1.2 {--} Algorithms as a technology}
+
+\begin{enumerate}
+
+\item[1.2{-}1] Give an example of an application that requires
+  algorithmic content at the application level, and discuss the function of the
+  algorithms involved.
+
+\begin{framed}
+The search engines we have today involves a lot of complex algorithms to work.
+It needs a ranking algorithm to sort the search results appropriately. It is
+also important to use a crawler that systematically browses and indexes the web
+content. During searching, this indexed content is gathered and filtered from
+the database using sophisticated algorithms.
+\end{framed}
+
+\item[1.2{-}2] Suppose we are comparing implementations of insertion
+  sort and merge sort on the same machine. For inputs of size $n$, insertion sort
+  runs in $8 n^2$ steps, while merge sort runs in $64 n \lg n$ steps. For which
+  values of $n$ does insertion sort beat merge sort?
+
+\begin{framed}
+For input values less than or equal to 43, insertion sort beats merge sort. We
+can ignore the case where $n = 1$, since a single element is already sorted by
+definition.
+\end{framed}
+
+\item[1.2{-}3] What is the smallest value of $n$ such that an algorithm
+  whose running time is $100 n^2$ runs faster than an algorithm whose running
+  time is $2^n$ on the same machine?
+
+\begin{framed}
+The smallest value of $n$ is 15.
+\end{framed}
+
+\end{enumerate}
+
+\pagebreak
+
+{\large Problems}
+
+\begin{enumerate}
+
+\item[1{-}1] Comparison of running times. For each function $f(n)$ and
+  time $t$ in the following table, determine the largest size $n$ of a problem
+  that can be solved in time $t$, assuming that the algorithm to solve the problem
+  takes $f(n)$ microseconds.
+
+\begin{framed}
+\centering
+\footnotesize
+\begin{tabular}{cccccccc}
+  \toprule
+  \multirow{2}{*}{$f(n)$} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} &
+  \textbf{1} & \textbf{1} & \textbf{1}\\
+  & \textbf{second} & \textbf{minute} & \textbf{hour} & \textbf{day} &
+    \textbf{month} & \textbf{year} & \textbf{century}\\
+
+  \midrule
+
+  $\lg n$ & $2^{10^6}$ & $2^{10^7 \times 6}$ & $2^{10^8 \times 36}$ &
+  $2^{10^8 \times 864}$ & $2^{10^9 \times 2592}$ &
+  $2^{10^9 \times 31536}$ & $2^{10^{11} \times 31536}$ \\
+
+  $\sqrt{n}$ & $10^{12}$ & $10^{14} \times 36$ & $10^{16} \times 1296$ &
+  $10^{16} \times 746496$ & $10^{18} \times 6718264$ &
+  $10^{18} \times 994519296$ & $10^{22} \times 994519296$ \\
+
+  $n$ & $10^6$ & $10^7 \times 6$ & $10^8 \times 36$ &
+  $10^8 \times 864$ & $10^9 \times 2592$ &
+  $10^9 \times 31536$ & $10^{11} \times 31536$ \\
+
+  $n \lg n$ & 62746 & 2801418 & 133378059 & 2755147513 & 71870856404 &
+  797633893349 & 68610956750570 \\
+
+  $n^2$ & $10^3$ & $7745$ & $10^4 \times 6$ & 293938 & 1609968 & 5615692 &
+  561569229 \\
+
+  $n^3$ & $10^2$ & 391 & 1532 & 4420 & 13736 & 31593 & 146645\\
+
+  $2^n$ & 9 & 25 & 31 & 36 & 41 & 44 & 51\\
+
+  $n!$ & 9 & 11 & 12 & 13 & 15 & 16 & 17\\
+
+  \bottomrule
+\end{tabular}
+\end{framed}
+
+\end{enumerate}
+
+\end{document}

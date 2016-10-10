@@ -1,0 +1,921 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{interval}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Appendix C {--} Counting and Probability}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\intervalconfig{soft open fences}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section C.1 {--} Counting}
+
+\begin{enumerate}
+
+\item[C.1{-}1] {How many $k$-substrings does an $n$-string have? (Consider
+identical $k$-substrings at different positions to be different.) How many
+substrings does an $n$-string have in total?}
+
+\begin{framed}
+For every position $i$ of the $n$-string, $i = 1, \dots, n - k + 1$, there is
+one $k$-substring the starts at $i$ and ends at $i + k - 1$. Thus, the number of
+$k$-substrings in a $n$-string is
+\[
+  \sum_{i = 1}^{n - k + 1} 1 = n - k + 1.
+\]
+
+Thus, the number of substrings (of all sizes) in an $n$-string is
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} n - k + 1 &= n^2 + n - \sum_{k = 1}^{n} {k}\\
+                             &= n^2 + n - \frac{n (n + 1)}{2}\\
+                             &= n (n + 1) - \frac{n (n + 1)}{2}\\
+                             &= \frac{n (n + 1)}{2}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.1{-}2] {An $n$-input, $m$-output \textbf{\emph{boolean function}} is
+a function from $\{\texttt{TRUE}, \texttt{FALSE}\}^n$ to
+$\{\texttt{TRUE}, \texttt{FALSE}\}^m$. How many $n$-input, $1$-output boolean
+functions are there? How many $n$-input, $m$-output boolean functions are
+there?}
+
+\begin{framed}
+We can view the number of possible inputs of size $n$ as the number of binary
+$n$-strings, which is $2^n$.
+
+Now, consider a single-valued function from $\{\texttt{TRUE},
+\texttt{FALSE}\}^n$ to $\{\texttt{TRUE}\}$. In this case, the number of
+possible functions is the number of possible inputs, which is $2^n$. Since an
+$1$-output boolean function has two possible output values, each of the $2^n$
+functions we referred in the case of a single-valued function now has two ways
+to pick the output value. We can view this number as the number of binary
+$2^n$-strings, which is $2^{2^n}$. As for an $n$-output function, each of the
+$2^n$ functions we referred in the case of a single-valued function now has
+$2^m$ ways to pick the output value. Thus, there are $({2^m})^{2^n}$ of those.
+\end{framed}
+
+\item[C.1{-}3] {In how many ways can $n$ professors sit around a circular
+conference table? Consider two seatings to be the same if one can be rotated to
+form the other.}
+
+\begin{framed}
+For two seatings to be different from each other, the ordering of professors in
+each seating needs to be different. This number can be viewed as the number
+of permutations of a set $n$ elements, which is $n!$. However, note that for
+each permutation that starts with professor $k$, $1 \le k \le n$, there are
+$n - 1$ other permutations that are just a rotation of it. For instance, the
+seatings $\{2, 3, 1\}$ and $\{3, 1, 2\}$ are a rotation of $\{1, 2, 3\}$. Thus,
+the number of different seatings can be viewed as fixing the seat of the first
+professor and computing the number of permutations of the remaining $n - 1$
+professors, which is $(n - 1)!$.
+\end{framed}
+
+\item[C.1{-}4] {In how many ways can we choose three distinct numbers from the
+set $\{1, 2, \dots, 99\}$ so that their sum is even?}
+
+\begin{framed}
+The set has $50$ odd numbers and $49$ even numbers. For the sum be even, we have
+to choose three even numbers or one even and two odds. For the case with three
+even numbers, there are $49!/(3! \cdot (49 - 3)!) = 18424$ ways of choosing $3$
+distincts numbers among the 49 even numbers. As for the case with one even and
+two odds, there are 49 ways to choose one even number and
+$50!/(2! \cdot (50 - 2)!) = 1225$ ways of choosing $2$ distincts numbers among the
+50 odd numbers. Thus, there are $18424 + 49 \cdot 1225 = 78449$ ways to get an
+even sum.
+\end{framed}
+
+\newpage
+
+\item[C.1{-}5] {Prove the identity
+\[
+  \binom{n}{k} = \frac{n}{k} \binom{n - 1}{k - 1}
+\]
+for $0 < k \le n$.
+}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \binom{n}{k} &= \frac{n!}{k! \cdot (n - k)!}\\
+               &= \frac{n \cdot (n - 1)!}{k \cdot (k - 1)! \cdot (n - k)!}\\
+               &= \frac{n}{k} \frac{(n - 1)!}{(k - 1)! \cdot ((n - 1) - (k - 1))!}\\
+               &= \frac{n}{k} \binom{n - 1}{k - 1}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.1{-}6] {Prove the identity
+\[
+  \binom{n}{k} = \frac{n}{n - k} \binom{n - 1}{k}
+\]
+for $0 \le k < n$.
+}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \binom{n}{k} &= \frac{n!}{k! \cdot (n - k)!}\\
+               &= \frac{n \cdot (n - 1)!}{k! \cdot (n - k) \cdot (n - k - 1)!}\\
+               &= \frac{n}{n - k} \frac{(n - 1)!}{k! \cdot ((n - 1) - k)!}\\
+               &= \frac{n}{n - k} \binom{n - 1}{k}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.1{-}7] {To choose $k$ objects from $n$, you can make one of the objects
+distinguished and consider whether the distinguished object is chosen. Use this
+approach to prove that
+\[
+  \binom{n}{k} = \binom{n - 1}{k} + \binom{n - 1}{k - 1}.
+\]
+}
+
+\begin{framed}
+Let $S = \{s_1, s_2, \dots, s_{n - 1}\}$ and $s_0$ the
+distinguished element. To choose $k$ from the $n$ elements, we have to consider
+two cases:
+\begin{enumerate}
+  \item If $s_0$ is selected, it will be necessary to choose the $k - 1$
+    remaining elements from $S$. There are $\binom{n - 1}{k - 1}$ combinations.
+  \item If $s_0$ is not selected, it will be necessary to choose the $k$
+    remaining elements from $S$. There are $\binom{n - 1}{k}$ combinations.
+\end{enumerate}
+Adding the above together, we have
+\begin{equation*}
+\begin{aligned}
+  \binom{n - 1}{k - 1} + \binom{n - 1}{k}
+  &= \frac{(n - 1)!}{(k - 1)! \cdot (n - k)!} + \frac{(n - 1)!}{k! \cdot (n - k - 1)!}\\
+  &= \frac{k \cdot (n - 1)!}{k! \cdot (n - k)!} + \frac{(n - k) \cdot (n - 1)!}{k! \cdot (n - k)!}\\
+  &= \frac{(k + n - k) \cdot (n - 1)!}{k! \cdot (n - k)!}\\
+  &= \frac{n!}{k! \cdot (n - k)!}\\
+  &= \binom{n}{k}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.1{-}8] {Using the result of Exercise C.1-7, make a table for
+$n = 0, 1, \dots, 6$ and $0 \le k \le n$ of the binomial coefficients
+$\binom{n}{k}$ with $\binom{0}{0}$ at the top, $\binom{1}{0}$ and $\binom{1}{1}$
+on the next line, and so forth. Such a table of binomial coefficients is called
+\textbf{\emph{Pascal's triangle}}.}
+
+\begin{framed}
+The table with binomials
+\begin{gather*}
+  \binom{0}{0}\\
+  \binom{1}{0} \quad \binom{1}{1}\\
+  \binom{2}{0} \quad \binom{2}{1} \quad \binom{2}{2}\\
+  \binom{3}{0} \quad \binom{3}{1} \quad \binom{3}{2} \quad \binom{3}{3}\\
+  \binom{4}{0} \quad \binom{4}{1} \quad \binom{4}{2} \quad \binom{4}{3} \quad \binom{4}{4}\\
+  \binom{5}{0} \quad \binom{5}{1} \quad \binom{5}{2} \quad \binom{5}{3} \quad \binom{5}{4} \quad \binom{5}{5}\\
+  \binom{6}{0} \quad \binom{6}{1} \quad \binom{6}{2} \quad \binom{6}{3} \quad \binom{6}{4} \quad \binom{6}{5} \quad \binom{6}{6}
+\end{gather*}
+Using the above table and the result of C.1-7, we have the Pascal's triangle
+\begin{gather*}
+  1\\
+  1 \quad 1\\
+  1 \quad 2 \quad 1\\
+  1 \quad 3 \quad 3 \quad 1\\
+  1 \quad 4 \quad 6 \quad 4 \quad 1\\
+  1 \quad 5 \quad 10 \quad 10 \quad 5 \quad 1\\
+  1 \quad 6 \quad 15 \quad 20 \quad 15 \quad 6 \quad 1
+\end{gather*}
+\end{framed}
+
+\item[C.1{-}9] {Prove that
+\[
+  \sum_{i = 1}^{n} i = \binom{n + 1}{2}.
+\]
+}
+
+\begin{framed}
+We have
+\begin{equation*}
+\begin{aligned}
+  \binom{n + 1}{2} &= \frac{(n + 1)!}{2! \cdot ((n + 1) - 2)!}\\
+                   &= \frac{(n + 1) \cdot n \cdot (n - 1)!}{2 \cdot (n - 1)!}\\
+                   &= \frac{n (n + 1)}{2}\\
+                   &= \sum_{i = 1}^{n} i,
+\end{aligned}
+\end{equation*}
+which also shows that the third Pascal's diagonal has the triangular numbers.
+\end{framed}
+
+\newpage
+
+\item[C.1{-}10] {Show that for any integers $n \ge 0$ and $0 \le k \le n$, the
+expression $\binom{n}{k}$ achieves its maximum value when $k = \floor{n/2}$ or
+$k = \ceil{n/2}$.}
+
+\begin{framed}
+It follows from the Pascal's triangle
+\begin{gather*}
+  1\\
+  1 \quad 1\\
+  1 \quad 2 \quad 1\\
+  1 \quad 3 \quad 3 \quad 1\\
+  1 \quad 4 \quad 6 \quad 4 \quad 1\\
+  1 \quad 5 \quad 10 \quad 10 \quad 5 \quad 1\\
+  1 \quad 6 \quad 15 \quad 20 \quad 15 \quad 6 \quad 1\\
+  \quad \quad \vdots \quad \quad
+\end{gather*}
+
+We can prove by induction. The base case, which occurs when $n = 0$,
+holds since
+\[
+  \binom{n}{\floor{n/2}} = \binom{n}{\ceil{n/2}} = \binom{0}{0} = 1
+\]
+is maximum on row 0.  Now, assume it holds for $n$. Then, if $n + 1$ is even,
+from Equation (C.3) we have
+\begin{equation*}
+\begin{aligned}
+  \binom{n + 1}{\floor{\frac{n + 1}{2}}} = \binom{n + 1}{\ceil{\frac{n + 1}{2}}}
+  &= \binom{n}{\left(\frac{n + 1}{2} - 1\right)} + \binom{n}{\left(\frac{n + 1}{2}\right)}\\
+  &= \binom{n}{\left(\frac{n}{2} - \frac{1}{2}\right)} + \binom{n}{\left(\frac{n}{2} + \frac{1}{2}\right)} & \text{(since $n$ is odd)}\\
+  &= \binom{n}{\floor{\frac{n}{2}}} + \binom{n}{\ceil{\frac{n}{2}}},
+\end{aligned}
+\end{equation*}
+which shows that is also holds for $n + 1$ since
+\[
+  \binom{n}{\floor{\frac{n}{2}}} \text{ and } \binom{n}{\ceil{\frac{n}{2}}}
+\]
+are both maximum on row $n$. The proof is similar when $n + 1$ is odd.
+\end{framed}
+
+\newpage
+
+\item[C.1{-}11] {($\star$) Argue that for any integers $n \ge 0$, $j \ge 0$,
+$k \ge 0$, and $j + k \le n$,
+\[
+  \binom{n}{j + k} \le \binom{n}{j} \binom{n - j}{k}.
+\]
+
+Provide both an algebraic proof and an argument based on a method for choosing
+$j + k$ items out of $n$. Give an example in which equality does not hold.
+}
+
+\begin{framed}
+For any integers $a \ge 0, b \ge 0,$ and $a \ge b$, we have
+\begin{equation*}
+\begin{aligned}
+  (a + b)! &=   \underbrace{(a + b) \cdot (a + b - 1) \cdot (a + b - 2) \cdots}_\text{$b$ times} a!\\
+           &\ge \underbrace{b \cdot (b - 1) \cdot (b - 2) \cdots}_\text{$b$ times} a!\\
+           &=   a! \cdot b!.
+\end{aligned}
+\end{equation*}
+
+Using the above result, we have
+\begin{equation*}
+\begin{aligned}
+  \binom{n}{j} \binom{n - j}{k} &=   \frac{n!}{j! \cdot (n - j)!} \frac{(n - j)!}{k! \cdot ((n - j) - k)!}\\
+                                &=   \frac{n!}{j! \cdot k! \cdot ((n - j) - k)!}\\
+                                &\ge \frac{n!}{(j + k)! \cdot (n - (j + k))!}\\
+                                &=   \binom{n}{j + k}.
+\end{aligned}
+\end{equation*}
+
+The expression on the left is the number of ways to choose an $(j + k)$-subset
+of an $n$-set (which leaves the reamining $n - (j + k)$ elements). Thus, it is
+a partition of the original $n$-set into subsets of cardinalities $(j + k)$ and
+$n - (j + k)$. The right hand side has two factors: the first binomial
+coefficient is the number of ways to choose a $j$-subset of an $n$-set (which
+leaves the reamining $n - j$ elements); the second is the number of ways to
+choose a $k$-subset from the remaining $n - j$ elements. Thus, it is a partition
+of the original $n$-set into subsets of cardinalities $j, k$, and $n - (j + k)$.
+Consider now that we choose the $n - (j + k)$ first, leaving behind the
+remaining $j + k$ elements. There is precisely one way to choose an
+$(j + k)$-subset out of the remaining $j + k$ elements. On the other hand, when
+we first choose $j$ and then we choose $k$, if $j < j + k$, there are
+\emph{at least} two ways to choose a $j$-subset from the $(j + k)$-subset and
+precisely one way to choose a $k$-subset from the remaining $k$ elements. This
+notion also applies to the algebraic proof, since
+$(j + k)! = j! \cdot k \iff j = 0$ or $k = 0$.
+Also note that while the left expression does not count any permutation of the
+$(j + k)$-subsets (since it normalizes by $(j + k)!$), the right
+expression, despite not counting permutations of each of the subsets
+indepentently (since it normalizes by $j! \cdot k!$), it counts permutations of
+two subsets together. For instance, let $A = \{a, b\}$. There is only one way to
+choose 2 elements from $A$, which is $ab$. However, there are two ways to choose
+one element and then another element from $A$, which are $ab$ and $ba$.
+
+\end{framed}
+
+\item[C.1{-}12] {($\star$) Use induction on all integers $k$ such that
+$0 \le k \le n/2$ to prove inequality (C.6), and use equation (C.3) to extend it
+to all integers $k$ such that $0 \le k \le n$.}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\item[C.1{-}13] {($\star$) Use Stirling's approximation to prove that
+\[
+  \binom{2n}{n} = \frac{2^{2n}}{\sqrt{\pi n}} (1 + O(1/n)).
+\]
+}
+
+\begin{framed}
+Skipped.
+% \begin{equation*}
+% \begin{aligned}
+%   \binom{2n}{n} &= \frac{(2n)!}{n! \cdot (2n - n)!}\\
+%                 &= \frac{(2n)!}{(n!)^2}\\
+%                 &= \frac{\sqrt{2 \pi 2n} \left(\frac{2n}{e}\right)^{2n} \left( 1 + \Theta\left(\frac{1}{2n}\right) \right)}
+%                         {(\sqrt{2 \pi n} \left(\frac{n}{e}\right)^{n} \left( 1 + \Theta\left(\frac{1}{n}\right) \right))^2}\\
+%                 &= \frac{\sqrt{2 \pi 2n} \left(\frac{2n}{e}\right)^{2n} \left( 1 + O\left(\frac{1}{n}\right) \right)}
+%                         {2 \pi n \left(\frac{n}{e}\right)^{2n} \left( 1 + O\left(\frac{1}{n}\right) \right)^2}
+% \end{aligned}
+% \end{equation*}
+\end{framed}
+
+\item[C.1{-}14] {($\star$) By differentiating the entropy function $H(\lambda)$,
+show that it achieves its maximum value at $\lambda = 1/2$. What is $H(1/2)$?}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\item[C.1{-}15] {($\star$) Show that for any integer $n \ge 0$,
+\[
+  \sum_{k = 0}^{n} \binom{n}{k} k = n 2^{n - 1}.
+\]
+}
+
+\begin{framed}
+Skipped.
+% \begin{equation*}
+% \begin{aligned}
+%   \sum_{k = 0}^{n} \binom{n}{k} k
+%   &= \sum_{k = 1}^{n} \binom{n}{k} k\\
+%   &= \sum_{k = 1}^{n} \frac{n!}{k! \cdot (n - k)!}\\
+%   &= \sum_{k = 1}^{n} \frac{n \cdot (n - 1)!}{k \cdot (k - 1)! (n - k) \cdot (n - k - 1)!}
+% \end{aligned}
+% \end{equation*}
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section C.2 {--} Probability}
+
+\begin{enumerate}
+
+\item[C.2{-}1] {Professor Rosencrantz flips a fair coin once. Professor
+Guildenstern flips a fair coin twice. What is the probability that Professor
+Rosencrantz obtains more heads than Professor Guildenstern?}
+
+\begin{framed}
+The sample space $\{\text{H}, \text{T}\}^3$ has size $2^3 = 8$. Since the only
+event that satisfies the condition is $\{\text{HTT}\}$, the probability is $1/8$.
+\end{framed}
+
+\item[C.2{-}2] {Prove the \textbf{\emph{Boole's inequality}}: For any finite or
+countably infinite sequence of events $A_1, A_2, \dots$,
+\[
+  \text{Pr}\{A_1 \cup A_2 \cup \cdots\} \le \text{Pr}\{A_1\} + \text{Pr}\{A_2\} + \cdots.
+\]
+}
+
+\begin{framed}
+From (C.13) we have
+\[
+\text{Pr}\{A_1 \cup A_2\} \le \text{Pr}\{A_1\} + \text{Pr}\{A_2\},
+\]
+which implies
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\{A_1 \cup A_2 \cup \cdots\} &=   \text{Pr}\{A_1 \cup (A_2 \cup \cdots)\}\\
+                                        &\le \text{Pr}\{A_1\} + \text{Pr}\{A_2 \cup (A_3 \cup \cdots)\}\\
+                                        &\le \text{Pr}\{A_1\} + \text{Pr}\{A_2\} + \text{Pr}\{A_3 \cup (A_4 \cup \cdots)\}\\
+                                        &\le \text{Pr}\{A_1\} + \text{Pr}\{A_2\} + \text{Pr}\{A_3\} \cdots.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.2{-}3] {Suppose we shuffle a deck of 10 cards, each bearing a distinct
+number from 1 to 10, to mix the cards thoroughly. We then remove three cards,
+one at a time, from the deck. What is the probability that we select the three
+cards in sorted (increasing) order?}
+
+\begin{framed}
+Let $a < b < c$ denote the number of the three selected cards. There are $3!$
+permutations of $\{a, b, c\}$ and $abc$ is the only one which is in sorted
+order. Thus, the probability is $1/3! = 1/6$.
+\end{framed}
+
+\item[C.2{-}4] {Prove that
+\[
+  \text{Pr}\{A\;|\;B\} + \text{Pr}\{\overline{A}\;|\;B\} = 1.
+\]
+}
+
+\begin{framed}
+We have
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\{B\} &= \text{Pr}\{(B \cap A) \cup (B \cap \overline{A})\}\\
+                 &= \text{Pr}\{B \cap A\} + \text{Pr}\{B \cap \overline{A}\}\\
+                 &= \text{Pr}\{A\} \text{Pr}\{B\;|\;A\} + \text{Pr}\{\overline{A}\} \text{Pr}\{B\;|\;\overline{A}\}.
+\end{aligned}
+\end{equation*}
+Substituting into (C.17) yields
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\{A\;|\;B\} + \text{Pr}\{\overline{A}\;|\;B\}
+  &= \frac{\text{Pr}\{A\} \text{Pr}\{B\;|\;A\}}{\text{Pr}\{B\}} +
+     \frac{\text{Pr}\{\overline{A}\} \text{Pr}\{B\;|\;\overline{A}\}}{\text{Pr}\{B\}}\\
+  &= \frac{\text{Pr}\{A\} \text{Pr}\{B\;|\;A\} + \text{Pr}\{\overline{A}\} \text{Pr}\{B\;|\;\overline{A}\}}
+          {\text{Pr}\{B\}}\\
+  &= \frac{\text{Pr}\{A\} \text{Pr}\{B\;|\;A\} + \text{Pr}\{\overline{A}\} \text{Pr}\{B\;|\;\overline{A}\}}
+          {\text{Pr}\{A\} \text{Pr}\{B\;|\;A\} + \text{Pr}\{\overline{A}\} \text{Pr}\{B\;|\;\overline{A}\}}\\
+  &= 1.
+\end{aligned}
+\end{equation*}
+
+\end{framed}
+
+\item[C.2{-}5] {Prove that for any collection of events $A_1, A_2, \dots, A_n$,
+\[
+  \text{Pr}\{A_1 \cap A_2 \cap \cdots \cap A_n\} =
+    \text{Pr}\{A_1\} \cdot \text{Pr}\{A_2\;|\;A_1\} \cdot \text{Pr}\{A_3\;|\;A_1 \cap A_2\} \cdots
+    \text{Pr}\{A_n\;|\;A_1 \cap A_2 \cap \cdots \cap A_{n - 1}\}.
+\]
+}
+
+\begin{framed}
+It is trivially valid for $n = 1$. As our base case, consider $n = 2$. From (C.16) we have
+\[
+  \text{Pr}\{A_1 \cap A_2\} = \text{Pr}\{A_1\} \text{Pr}\{A_2\;|\;A_1\}.
+\]
+Now assume it holds for $n$. For $n + 1$, we have
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\{A_1 \cap A_2 \cap \cdots \cap A_{n + 1}\}
+  &= \text{Pr}\{(A_1 \cap A_2 \cap \cdots \cap A_n) \cap A_{n + 1}\}\\
+  &= \text{Pr}\{A_1 \cap A_2 \cap \cdots \cap A_n\} \text{Pr}\{A_{n + 1}\;|\;A_1 \cap A_2 \cap \cdots \cap A_n\}\\
+  &= \text{Pr}\{A_1\} \cdot \text{Pr}\{A_2\;|\;A_1\} \cdot \text{Pr}\{A_3\;|\;A_1 \cap A_2\} \cdots
+     \text{Pr}\{A_{n + 1}\;|\;A_1 \cap A_2 \cap \cdots \cap A_{n}\}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.2{-}6] {($\star$) Describe a procedure that takes as input two integers
+  $a$ and $b$ such that $0 < a < b$ and, using fair coin flips, produces as
+  output heads with probability $a/b$ and tails with probability $(b - a)/b$.
+  Give a bound on the expected number of coin flips, which should be $O(1)$.
+  (Hint: Represent $a/b$ in binary.)}
+
+\begin{framed}
+Consider a continuous uniform probability distribution on
+$\interval[open right]{0}{1}$, such that $\text{Pr}\{\interval[open right]{0}{1}\} = 1$. We have
+\[
+  \text{Pr}\left\{\interval[open right, scaled]{0}{\frac{a}{b}}\right\} = \frac{a}{b},
+\]
+and
+\[
+  \text{Pr}\left\{\interval[open right, scaled]{\frac{a}{b}}{1}\right\} = 1 - \frac{a}{b} = \frac{b - a}{b}.
+\]
+
+With this notion, we can write a procedure that sorts a real number from
+$\interval[open right]{0}{1}$ and return heads if it is lower than $a/b$ or
+return tails, otherwise. Using fair coin flips and representing numbers in
+binary, for each flip we have a new decimal place from a random number on
+$\interval[open right]{0}{1}$ (consider an ``0'' if the coin flip is head and
+``1'', otherwise). Then,
+\begin{itemize}
+\item if the $i$-th flip is 1 and the $i$-th decimal place
+of $a/b$ is 0, the sorted number is larger than $a/b$ and we return tails;
+\item if the $i$-th flip is 0 and the $i$-th decimal place
+of $a/b$ is 1, the sorted number is smaller than $a/b$ and we return head;
+\item if the $i$-th flip and the $i$-th decimal place are equal, we sort a new
+decimal place.
+\end{itemize}
+
+Since we do not know how many decimal places $a/b$ has (if periodic, this number
+is infinite), the above procedure does not have a maximum number of iterations.
+However, since for each flip we have a probability of 1/2 of returning head or
+tails, the probability of terminating at flip $i$, for $i \ge 1$, is
+\[
+  \underbrace{1/2 \cdot 1/2 \cdots}_\text{$i$ times} = \frac{1}{2^i}.
+\]
+Thus, by using the notion of expected value and the result (A.8), the expected number of
+flips is
+\[
+  \sum_{i = 1}^{\infty} i \cdot \frac{1}{2^i}
+  = \sum_{i = 0}^{\infty} i \cdot \left(\frac{1}{2}\right)^{i}
+  = \frac{1/2}{(1 - 1/2)^2} = 2.
+\]
+
+\end{framed}
+
+\item[C.2{-}7] {($\star$) Show how to construct a set of $n$ events that are
+  paiwise independent but such that no subset of $k > 2$ of them is mutually
+  independent.}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\item[C.2{-}8] {($\star$) Two events $A$ and $B$ are \textbf{\emph{conditionally
+  independent}}, given $C$, if
+  \[
+    \text{Pr}\{A \cap B\;|\;C\} = \text{Pr}\{A\;|\;C\} \cdot \text{Pr}\{B\;|\;C\}.
+  \]
+  Give a simple but nontrivial example of two events that are not independent
+  but are conditionally independent given a third event.
+}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\newpage
+
+\item[C.2{-}9] {($\star$) You are a contestant in a game show in which a prize
+  is hidden behind one of three curtains. You will win the prize if you select
+  the correct curtain. After you have picked one curtain but before the curtain
+  is lifted, the emcee lifts one of the other curtains, knowing that it will
+  reveal an empty stage, and asks if you would like to switch from your current
+  selection to the remaining curtain. How would your chances change if you
+  switch? (This question is the celebrated \textbf{\emph{Monty Hall problem}},
+  named after a game-show host who often presented contestants with just this
+  dilemma.)}
+
+\begin{framed}
+If you never switch, the only way to win is to choose the right curtain at the
+beginning (before the emcee lifts one of the others). In this case, your chance
+to win are $1/3$. If you always switch, the only way to loose is to choose the
+right curtain at the beginning. In this case, when you choose a curtain without
+the prize, the emcee will reveal the other empty curtain and you will
+therefore change to the correct one. Thus, your chance to win are $(1
+- 1/3) = 2/3$.
+\end{framed}
+
+\item[C.2{-}10] {($\star$) A prison warden has randomly picked one prisoner
+  among three to go free. The other two will be executed. The guard knows which
+  one will go free but is forbidden to give any prisoner information regarding
+  his status. Let us call the prisoners $X, Y$, and $Z$. Prisoner $X$ asks the
+  guard privately which of $Y$ or $Z$ will be executed, arguing that since he
+  already knows that at least one of them must die, the guard won't be revealing
+  any information about his own status. The guard tells $X$ that $Y$ is to be
+  executed.  Prisoner $X$ feels happier now, since he figures that either he or
+  prisoner $Z$ will go free, which means that his probability of going free is
+  now $1/2$. Is he right, or are his chances still $1/3$? Explain.}
+\begin{framed}
+  His chances are still $1/3$. Let $A$ be the event of prisoner $X$ going free
+  and $B$ the event that the guard tells $X$ that $Y$ is to be executed. We have
+  \[
+    \text{Pr}(A\;|\;B) = \frac{\text{Pr}(A) \text{Pr}(B\;|\;A)}{\text{Pr}(B)} = \frac{1/3 \cdot 1/2}{1/2} = \frac{1}{3}.
+  \]
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section C.3 {--} Discrete random variables}
+
+\begin{enumerate}
+
+\item[C.3{-}1]{Suppose we roll two ordinary, 6-sided dice. What is the
+expectation of the sum of the two values showing? What is the expectation of
+the maximum of the two values showing?}
+
+\begin{framed}
+There are $36$ elementary events in the sample space. Since they are
+ordinary dices, the probability distribution is uniform.
+
+Let $X$ be the random variable of the sum of the two values. The possible
+outcomes of $X$ are
+\begin{center}
+\begin{tabular}{rrrrrrr}
+  & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6}\\
+  \textbf{1} & 2 & 3 & 4 & 5  & 6  & 7\\
+  \textbf{2} & 3 & 4 & 5 & 6  & 7  & 8\\
+  \textbf{3} & 4 & 5 & 6 & 7  & 8  & 9\\
+  \textbf{4} & 5 & 6 & 7 & 8  & 9  & 10\\
+  \textbf{5} & 6 & 7 & 8 & 9  & 10 & 11\\
+  \textbf{6} & 7 & 8 & 9 & 10 & 11 & 12
+\end{tabular}
+\end{center}
+
+Thus, we have
+\begin{equation*}
+\begin{aligned}
+  \text{E}[X] &= \sum_{x = 2}^{12} x \cdot \text{Pr}(X = x)\\
+              &= 2 \cdot \frac{1}{36} + 3 \cdot \frac{2}{36} + 4 \cdot \frac{3}{36} + 5 \cdot \frac{4}{36}
+               + 6 \cdot \frac{5}{36} + 7 \cdot \frac{6}{36} + 8 \cdot \frac{5}{36} + 9 \cdot \frac{4}{36}
+               + 10 \cdot \frac{3}{36} + 11 \cdot \frac{2}{36} + 12 \cdot \frac{1}{36}\\
+              &= 7.
+\end{aligned}
+\end{equation*}
+
+Let $Y$ be the random variable of the maximum of the two values. The possible
+outcomes of $Y$ are
+
+\begin{center}
+\begin{tabular}{rrrrrrr}
+  & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6}\\
+  \textbf{1} & 1 & 2 & 3 & 4 & 5 & 6\\
+  \textbf{2} & 2 & 2 & 3 & 4 & 5 & 6\\
+  \textbf{3} & 3 & 3 & 3 & 4 & 5 & 6\\
+  \textbf{4} & 4 & 4 & 4 & 4 & 5 & 6\\
+  \textbf{5} & 5 & 5 & 5 & 5 & 5 & 6\\
+  \textbf{6} & 6 & 6 & 6 & 6 & 6 & 6
+\end{tabular}
+\end{center}
+
+Thus, we have
+\begin{equation*}
+\begin{aligned}
+  \text{E}[Y] &= \sum_{x = 1}^{6} x \cdot \text{Pr}(X = x)\\
+              &= 1 \cdot \frac{1}{36} + 2 \cdot \frac{3}{36} + 3 \cdot \frac{5}{36} + 4 \cdot \frac{7}{36}
+               + 5 \cdot \frac{9}{36} + 6 \cdot \frac{11}{36}\\
+              &\approx 4.47.
+\end{aligned}
+\end{equation*}
+
+\end{framed}
+
+\item[C.3{-}2]{An array $A[1 \dots n]$ contains $n$ distinct numbers that are
+randomly ordered, with each permutation of the $n$ numbers being equally
+likely. what is the expectation of the index of the maximum element in the
+array? What is the expectation of the index of the minimum element in the
+array?}
+
+\begin{framed}
+Let $X$ and $Y$ be random variables of the index of the maximum and minimum
+elements, respectivelly. Since each permutation is equaly likely,
+\[
+  \text{E}[X] = \text{E}[Y] = \sum_{i = 1}^{n} i \cdot \frac{1}{n} = \frac{1}{n} \frac{n (n + 1)}{2} = \frac{n + 1}{2}.
+\]
+\end{framed}
+
+\newpage
+
+\item[C.3{-}3]{A carnival game consists of three dice in a cage. A player can
+bet a dollar on any of the numbers $1$ through $6$. The cage is shaken, and
+the payoff is as follows. If the player's number doesn't appear on any of
+the dice, he loses his dollar. Otherwise, if his number appears on exactly
+$k$ of the three dice, for $k = 1, 2, 3$, he keeps his dollar and wins $k$
+more dollars. What is his expected gain from playing the carnival game
+once?}
+
+\begin{framed}
+Let $X$ be a random variable of the total gain. The possible outcomes are
+$-1, 1, 2, 3$. We have
+\begin{equation*}
+\begin{aligned}
+  & \text{Pr}\{X = -1\} &&= (5/6 \cdot 5/6 \cdot 5/6)         &&= 125/216,\\
+  & \text{Pr}\{X = 1\}  &&= (1/6 \cdot 5/6 \cdot 5/6) \cdot 3 &&= 75/216,\\
+  & \text{Pr}\{X = 2\}  &&= (1/6 \cdot 1/6 \cdot 5/6) \cdot 3 &&= 15/216,\\
+  & \text{Pr}\{X = 3\}  &&= (1/6 \cdot 1/6 \cdot 1/6)         &&= 1/216.
+\end{aligned}
+\end{equation*}
+Thus, we have
+\[
+  \text{E}[X] = -1 \cdot \frac{125}{216} + 1 \cdot \frac{75}{216} + 2 \cdot \frac{15}{216} + 3 \cdot \frac{1}{216} \approx -0.0787.
+\]
+\end{framed}
+
+\item[C.3{-}4]{Argue that if $X$ and $Y$ are nonnegative random variables, then
+\[
+  \text{E}[\max(X, Y)] \le \text{E}[X] + \text{E}[Y].
+\]
+}
+
+\begin{framed}
+The expectation of nonnegative random variables is a summation of nonnegative
+numbers. Thus, since $\text{E}[\max(X, Y)]$ is either $\text{E}[X]$ or
+$\text{E}[Y]$, it must be equal or lower than $\text{E}[X] + \text{E}[Y]$.
+\end{framed}
+
+\item[C.3{-}5]{($\star$) Let $X$ and $Y$ be independent random variables. Prove
+that $f(X)$ and $g(Y)$ are independent for any functions $f$ and $g$.}
+
+\begin{framed}
+Skipped.
+
+% \begin{equation*}
+% \begin{aligned}
+%   \text{Pr}\{f(X) = f(x) \text{ and } g(Y) = g(y)\}
+%   &= \text{Pr}\{X = x \text{ and } Y = y\}\\
+%   &= \text{Pr}\{X = x\} \text{Pr}\{Y = y\}\\
+%   &= \text{Pr}\{f(X) = f(x)\} \text{Pr}\{g(Y) = g(y)\}.
+% \end{aligned}
+% \end{equation*}
+
+% Since $X$ and $Y$ are (discrete) independent random variables, we have
+% \begin{equation*}
+% \begin{aligned}
+% \sum_{x} \sum_{y} \text{Pr}\{X = x \text{ and } Y = y\}
+% &= \sum_{x} \sum_{y} \text{Pr}\{X = x\} \text{Pr}\{Y = y\}\\
+% &= \sum_{x} \text{Pr}\{X = x\} \sum_{y} \text{Pr}\{Y = y\}.
+% \end{aligned}
+% \end{equation*}
+\end{framed}
+
+\item[C.3{-}6]{($\star$) Let $X$ be a nonnegative random variable, and suppose
+that $\text{E}[X]$ is well defined. Prove \textbf{\emph{Markov's inequality}}:
+\[
+  \text{Pr}\{X \ge t\} \le \text{E}[X]/t
+\]
+for all $t > 0$.
+}
+
+\begin{framed}
+We have
+\begin{equation*}
+\begin{aligned}
+  \text{E}[X] &=   \sum_{x}{x \cdot \text{Pr}\{X = x\}}\\
+              &\ge \sum_{x \ge t}{x \cdot \text{Pr}\{X = x\}}\\
+              &\ge \sum_{x \ge t}{t \cdot \text{Pr}\{X = x\}}\\
+              &= t \cdot \sum_{x \ge t}{\text{Pr}\{X = x\}}\\
+              &= t \cdot \text{Pr}\{X \ge t\},
+\end{aligned}
+\end{equation*}
+which implies
+\[
+  \text{Pr}\{X \ge t\} \le \text{E}[X]/t.
+\]
+\end{framed}
+
+\newpage
+
+\item[C.3{-}7]{($\star$) Let $S$ be a sample space, and let $X$ and $X'$ be
+random variables such that $X(s) \ge X'(s)$ for all $s \in S$. Prove that for
+any real constant $t$,
+\[
+  \text{Pr}\{X \ge t\} \ge \text{Pr}\{X' \ge t\}.
+\]
+}
+
+\begin{framed}
+Assuming that the domain of $X$ and $X'$ are the sample space $S$, we have
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\{X \ge t\} &=   \sum_{s \in S:X(s) \ge t}{\text{Pr}\{X = s\}}\\
+                       &=   \sum_{s \in S:X'(s) \ge t}{\text{Pr}\{X' = s\}} + \sum_{s \in S:X(s) \ge t > X'(s)}{\text{Pr}\{X' = s\}}\\
+                       &\ge \sum_{s \in S:X'(s) \ge t}{\text{Pr}\{X' = s\}}\\
+                       &=   \text{Pr}\{X' \ge t\}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.3{-}8]{Which is larger: the expectation of the square of a random
+variable, or the square of its expectation?}
+
+\begin{framed}
+We have from (C.28)
+\[
+  \text{E}[X^2] = \text{Var}[X] + \text{E}^2[X],
+\]
+which implies
+\[
+  \text{E}[X^2] \ge \text{E}^2[X],
+\]
+since both $\text{Var}[X]$ and $\text{E}^2[X]$ are nonnegative numbers.
+
+\end{framed}
+
+\item[C.3{-}9]{Show that for any random variable X that takes on only the values
+0 and 1, we have
+\[
+  \text{Var}[X] = \text{E}[X] \text{E}[1 - X].
+\]
+}
+
+\begin{framed}
+We have
+\[
+  \text{E}[X] = 0 \cdot \text{Pr}\{X = 0\} + 1 \cdot \text{Pr}\{X = 1\} = \text{Pr}\{X = 1\},
+\]
+and
+\[
+  \text{E}[1 - X] = 1 \cdot \text{Pr}\{X = 0\} + 0 \cdot \text{Pr}\{X = 1\} = \text{Pr}\{X = 0\},
+\]
+which implies
+\begin{equation*}
+\begin{aligned}
+  \text{Var}[X] &= \text{E}[X^2] - \text{E}^2[X] & \text{(since $X^2 = X$)}\\
+                &= \text{E}[X] - \text{E}[X] \text{E}[X]\\
+                &= \text{E}[X] (1 - \text{E}[X])\\
+                &= \text{E}[X] (1 - \text{Pr}\{X = 1\})\\
+                &= \text{E}[X] \text{Pr}\{X = 0\}\\
+                &= \text{E}[X] \text{E}[1 - X].
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[C.3{-}10]{Prove that $\text{Var}[aX] = a^2 \text{Var}[X]$ from the
+definition (C.27) of variance.}
+
+\begin{framed}
+Assuming that $X$ is a random variable and $a$ is a constant, from (C.27) and
+(C.22) we have
+\begin{equation*}
+\begin{aligned}
+  \text{Var}[a X] &= \text{E}[(a X - \text{E}[a X])^2]\\
+                  &= \text{E}[(a X - a \text{E}[X])^2]\\
+                  &= \text{E}[a^2 (X - \text{E}[X])^2]\\
+                  &= a^2 \text{E}[(X - \text{E}[X])^2]\\
+                  &= a^2 \text{Var}[X].
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\end{enumerate}
+
+\end{document}

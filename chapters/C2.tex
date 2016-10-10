@@ -1,0 +1,836 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english,brazil,brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{algorithm2e} %for psuedo code
+\usepackage{courier}
+\usepackage{mathtools}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 2 {--} Getting Started}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 2.1 {--} Insertion sort}
+
+\begin{enumerate}
+
+\item[2.1{-}1]{Using Figure 2.2 as a model, illustrate the operation of
+  \textsc{Insertion-Sort} on the array $A = \langle 31, 41, 59, 26, 41, 58 \rangle$.}
+
+\begin{framed}
+{\centering $ \displaystyle
+\begin{aligned}
+  \colorbox{white}{(\texttt{a})} \colorbox{white}{31} \colorbox{yellow}{\textcolor{red}{41}}
+  \colorbox{white}{59} \colorbox{white}{26} \colorbox{white}{41} \colorbox{white}{58}\\
+%
+  \colorbox{white}{(\texttt{b})} \colorbox{white}{31} \colorbox{white}{41} \colorbox{yellow}{\textcolor{red}{59}}
+  \colorbox{white}{26} \colorbox{white}{41} \colorbox{white}{58}\\
+%
+  \colorbox{white}{(\texttt{c})} \colorbox{gray!20}{\textcolor{red}{31}} \colorbox{gray!20}{41} \colorbox{gray!20}{59}
+  \colorbox{yellow}{\textcolor{red}{26}} \colorbox{white}{41} \colorbox{white}{58}\\
+%
+  \colorbox{white}{(\texttt{d})} \colorbox{white}{26} \colorbox{white}{31} \colorbox{white}{41}
+  \colorbox{gray!20}{\textcolor{red}{59}} \colorbox{yellow}{\textcolor{red}{41}} \colorbox{white}{58}\\
+%
+  \colorbox{white}{(\texttt{e})} \colorbox{white}{26} \colorbox{white}{31} \colorbox{white}{41}
+  \colorbox{white}{41} \colorbox{gray!20}{\textcolor{red}{59}} \colorbox{yellow}{\textcolor{red}{58}}\\
+%
+  \colorbox{white}{(\texttt{f})} \colorbox{white}{26} \colorbox{white}{31} \colorbox{white}{41}
+  \colorbox{white}{41} \colorbox{white}{58} \colorbox{white}{59}\\
+\end{aligned} $ \par} % Necessary for centering to work
+\end{framed}
+
+\item[2.1{-}2]{Rewrite the \textsc{Insertion-Sort} procedure to sort into
+  non-increasing instead of non-decreasing order.}
+
+
+\begin{framed}
+The pseudocode is stated below.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{InsertionSortNonIncreasing}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A}}{%
+\nl \For{$j = 2$ \KwTo $A.length$}{%
+\nl   $key = A[j]$\;
+\nl   $i = j - 1$\;
+\nl   \While{$i > 0$ \upshape{and} $A[i] > key$}{%
+\nl     $A[i + 1] = A[i]$\;
+\nl     $i = i - 1$\; }
+\nl   $A[i + 1] = key$\; } }
+\end{algorithm}
+\end{framed}
+
+\item[2.1{-}3]{Consider the \textbf{\emph{searching problem}}:\vspace{1mm}\\
+\textbf{Input:} A sequence of $n$ numbers $A = \langle a_1, a_2, \dots, a_n \rangle$ and a value $\nu$.\\
+\textbf{Output:} An index $i$ such that $\nu = A[i]$ or the special value NIL if $\nu$ does not appear in $A$.\vspace{1mm}\\
+Write pseudocode for linear search, which scans through the sequence, looking
+for $\nu$. Using a loop invariant, prove that your algorithm is correct. Make
+sure that your loop invariant fulfills the three necessary properties.}
+
+\begin{framed}
+The pseudocode is stated below.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{LinearSearch}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A, $\nu$}}{%
+  \nl \For{$i = 1$ \KwTo $A.length$}{%
+  \nl   \If{$A[i] == \nu$}{%
+  \nl     \Return{$i$}\; } }
+  \nl \Return{\upshape{NIL}}\; }
+\end{algorithm}
+
+Here is the \emph{loop invariant}. At the start of each iteration of the
+\textbf{for} loop of lines 1{--}3, the algorithm assures that the subarray $A[1,
+\dots, i - i]$ does not contain the element $\nu$. Within each iteration, if
+$A[i]$ corresponds to the $\nu$ element, its index is returned.
+
+\begin{itemize}
+  \item \textbf{Initialization.} Before the \textbf{for} loop, $i = 1$ and $A[1,
+    \dots, i - 1]$ constains no element (therefore does not contain $\nu$).
+
+  \item \textbf{Maintenance.} The body of the \textbf{for} loop verifies if
+    $A[i]$ corresponds to the $\nu$ element. If the element correspond to $\nu$,
+    its index is returned. Otherwise, incrementing $i$ for the next iteration of
+    the \textbf{for} loop then preserves the loop invariant.
+
+  \item \textbf{Termination.} The \textbf{for} loop can terminate in one of the
+    following conditions: (1) $A[i] = \nu$, which means that $\nu$ was found and
+    its index is returned; (2) $i > A.length$ and, since each loop iteration
+    increases $i$ by 1, at that time we have $i = A.length + 1$ which assures
+    (from the previous property) that $A[1, \dots, A.length]$ does not contain
+    the element $\nu$.
+\end{itemize}
+\end{framed}
+
+\item[2.1{-}4]{Consider the problem of adding two $n$-bit binary integers,
+stored in two $n$-element arrays $A$ and $B$. The sum of the two integers should
+be stored in binary form in an ($n + 1$)-element array $C$. State the problem
+formally and write pseudocode for adding the two integers.}
+
+\begin{framed}
+The pseudocode is stated below. Integers are stored in little endian format.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{AddIntegers}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A, B}}{%
+  \nl let $C[1, \dots, n + 1]$ be a new array\;
+  \nl $C[1] = 0$\;
+  \nl \For{$i = 1$ \KwTo $A.length$}{%
+  \nl   $s = A[i] + B[i] + C[i]$\;
+  \nl   $C[i] = s \mod 2$\;
+  \nl   $C[i + 1] = s$ / $2$\; }
+  \nl \Return{C} }
+\end{algorithm}
+\end{framed}
+
+\end{enumerate}
+
+\pagebreak
+
+{\large Section 2.2 {--} Analyzing algorithms}
+
+\begin{enumerate}
+
+\item[2.2{-}1]{Express the function $n^3/1000 - 100n^2 - 100n + 3$ in terms of
+$\Theta$-notation.}
+
+\begin{framed}
+  $\Theta(n^3)$.
+\end{framed}
+
+\item[2.2{-}2]{Consider sorting $n$ numbers stored in array $A$ by first finding
+the smallest element of $A$ and exchanging it with the element in $A[1]$. Then
+find the second smallest element of $A$, and exchange it with $A[2]$.  Continue
+in this manner for the first $n - 1$ elements of $A$. Write pseudocode for this
+algorithm, which is known as \textbf{\emph{selection sort}}. What loop invariant
+does this algorithm maintain? Why does it need to run for only the first $n - 1$
+elements, rather than for all $n$ elements? Give the best-case and worst-case
+running times of selection sort in $\Theta$-notation.}
+
+\begin{framed}
+The pseudocode is stated below.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{SelectionSort}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A}}{%
+  \nl \For{$i = 1$ \KwTo $A.length - 1$}{%
+  \nl   $smallest = i$\;
+  \nl   \For{$j = i + 1$ \KwTo $A.length$}{%
+  \nl     \If{$A[j] < A[smallest]$}{%
+  \nl         $smallest = j$\; } }
+  \nl   $tmp = A[i]$\;
+  \nl   $A[i] = A[smallest]$\;
+  \nl   $A[smallest] = tmp$\; } }
+\end{algorithm}
+
+Here is the \emph{loop invariant}. At the start of each iteration of the
+\textbf{for} loop of lines 1{--}8, the subarray $A[1, \dots, i - i]$ consists of
+the $(i - 1)$ smallest elements of the array $A$ in sorted order.
+
+\begin{itemize}
+  \item \textbf{Initialization.} Before the \textbf{for} loop, $i = 1$ and $A[1,
+    \dots, i - 1]$ constains no element.
+
+  \item \textbf{Maintenance.} The body of the \textbf{for} loop looks on the
+    subarray $A[i + 1, \dots, A.length]$ for a element that is smaller than
+    $A[i]$. If a smaller element is found, their positions in $A$ are exchanged.
+    Since the subarray $A[1, \dots, i - 1]$ already contains the $i$ smallest
+    elements of $A$, the smaller element between $A[i]$ and $A[i + 1, \dots,
+    A.length]$ is the i-th smallest element of $A$, which maintains our
+    \emph{loop invariant} for the subarray $[1, \dots, i]$.
+
+  \item \textbf{Termination.} The condition causing the \textbf{for} loop to
+    terminate is that $i == A.length - 1$. At that time, $i = A.length = n$.
+    Since (from the previous property) the subarray $A[1, \dots, n - 1]$
+    consists of the $(n - 1)$ smaller elements $A$, the lasting element $A[n]$
+    can only be the $n$-th smaller element.
+\end{itemize}
+
+It needs to run only for the first $(n - 1)$ element because, after that, the
+subarray $A[1, \dots, n - 1]$ consists of the $(n - 1)$ smaller elements
+of $A$ and the $n$-th element is already in the correct position.
+
+Regardless of the content of the input array $A$, for
+$i = 1, 2, \dots, (A.length - 1)$ the algorithm will always look for the $i$-th
+element in the whole subarray $A = [i + 1, A.length]$. Thus, the algorithm takes
+$\Theta(n^2)$ for every input.
+\end{framed}
+
+\item[2.2{-}3]{Consider linear search again (see Exercise 2.1-3). How many
+elements of the input sequence need to be checked on the average, assuming
+that the element being searched for is equally likely to be any element in
+the array? How about in the worst case? What are the average-case and
+worst-case running times of linear search in $\Theta$-notation? Justify your
+answers.}
+
+\begin{framed}
+Lets consider an array of size $n$, where each element is taken from the set $1,
+\dots, k$. If $k$ is not a function of $n$, its a constant. In the average case,
+each comparison has probability $1/k$ to find the element that is being
+searched, resulting in an average of $k$ comparisons. Thus, in the average case,
+as a function of the input size, the algorithm takes $\Theta(k)$ = $\Theta(1)$.
+The worst case occurs when $k >= n$, which takes $\Theta(n)$.
+\end{framed}
+
+\item[2.2{-}4]{How can we modify almost any algorithm to have a good best-case
+  running time?}
+
+\begin{framed}
+Verify if the input is already solved. If it is solved, do nothing. Otherwise,
+solve it with some algorithm.
+\end{framed}
+
+\end{enumerate}
+
+\pagebreak
+
+{\large Section 2.3 {--} Analyzing algorithms}
+
+\begin{enumerate}
+
+\item[2.3{-}1]{Using Figure 2.4 as a model, illustrate the operation of merge
+sort on the array $A = \langle 3,41, 52, 26, 38, 57, 9, 49 \rangle$}
+
+\begin{framed}
+
+{\centering $ \displaystyle
+\begin{aligned}
+  \colorbox{gray!12}{\strut 3} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut 9} \colorbox{gray!12}{\strut}
+  \colorbox{gray!12}{\strut26} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut38} \colorbox{gray!12}{\strut}
+  \colorbox{gray!12}{\strut41} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut49} \colorbox{gray!12}{\strut}
+  \colorbox{gray!12}{\strut52} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut57}\\
+%
+  \colorbox{gray!12}{\strut 3} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut26} \colorbox{gray!12}{\strut}
+  \colorbox{gray!12}{\strut41} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut52} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut 9} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut38} \colorbox{gray!12}{\strut}
+  \colorbox{gray!12}{\strut49} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut57}\\
+%
+  \colorbox{gray!12}{\strut 3} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut41} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut26} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut52} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut38} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut57} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut 9} \colorbox{gray!12}{\strut} \colorbox{gray!12}{\strut49}\\
+%
+  \colorbox{gray!12}{\strut 3} \colorbox{white}{\strut}   \colorbox{gray!12}{\strut41} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut52} \colorbox{white}{\strut}   \colorbox{gray!12}{\strut26} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut38} \colorbox{white}{\strut}   \colorbox{gray!12}{\strut57} \colorbox{white}{\strut}
+  \colorbox{gray!12}{\strut 9} \colorbox{white}{\strut}   \colorbox{gray!12}{\strut49}\\
+\end{aligned} $ \par} % Necessary for centering to work
+
+\end{framed}
+
+\item[2.3{-}2]{Rewrite the \textsc{Merge} procedure so that it does not use
+sentinels, instead stopping once either array $L$ or $R$ has had all its
+elements copied back to $A$ and then copying the remainder of the other
+array back into $A$.}
+
+\begin{framed}
+The pseudocode is stated below.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Merge}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A, p, q, r}}{%
+  \nl $n_1 = q - p + 1$\;
+  \nl $n_2 = r - q$\;
+  \nl let $L[1, \dots, n_1]$ and $R[1, \dots, n_2]$ be new arrays\;
+  \nl \For{$i = 1$ \KwTo $n_1$}{%
+  \nl   $L[i] = A[p + i - 1]$\; }
+  \nl \For{$j = 1$ \KwTo $n_2$}{%
+  \nl  $R[j] = A[q + j]$\; }
+  \nl $i = 1$\;
+  \nl $j = 1$\;
+  \nl \For{$k = p$ \KwTo $r$}{%
+  \nl  \If{$q + j > r$ \upshape{\textbf{or}} $L[i] \le R[j]$}{%
+  \nl    $A[k] = L[i]$\;
+  \nl    $i = i + 1$\; }
+  \nl  \Else{%
+  \nl    $A[k] = R[j]$\;
+  \nl    $j = j + 1$\; } }
+}{}
+\end{algorithm}
+\end{framed}
+
+\item[2.3{-}3]{Use mathematical induction to show that when $n$ is an exact
+power of 2, the solution of the recurrence
+\begin{equation*}
+  T(n) =
+    \begin{cases}
+      2 & \text{if}\ n=2 \text{,} \\
+      2 T(n/2) + n & \text{if}\ n = 2^k \text{, for } k> 1
+    \end{cases}
+\end{equation*}
+is $T(n) = n \lg n$.
+}
+
+\begin{framed}
+  The base case is trivial, since $T(2) = 2 \lg 2 = 2$. To prove that it holds
+  for $n > 2$ using mathematical induction, we need to show that if it holds for
+  $n - 1$, it also holds for $n$. From the recurrence, $T(n) = 2T(n / 2) + n$.
+  But by inductive hypothesis, $T(n / 2) = (n / 2) \lg (n / 2)$, so we get that:
+
+  \begin{equation*}
+  \begin{split}
+    T(n) & = 2T(n/2) + n\\
+         & = 2 (n / 2) \lg (n / 2) + n\\
+         & = n \lg (n / 2) + n\\
+         & = n (\lg (n) - \lg(2)) + n\\
+         & = n \lg (n) - n + n\\
+         & = n \lg (n).\\
+  \end{split}
+  \end{equation*}
+
+\end{framed}
+
+\item[2.3{-}4]{We can express insertion sort as a recursive procedure as
+follows. In order to sort $A[1, \dots, n]$, we recursively sort $A[1, \dots,
+n - 1]$ and then insert $A[n]$ into the sorted array $A[1, \dots, n - 1]$. Write
+a recurrence for the worst-case running time of this recursive version of
+insertion sort.}
+
+\begin{framed}
+The recurrence is stated below.
+\begin{equation*}
+  T(n) =
+    \begin{cases}
+      \Theta(1) & \text{if}\ n=1 \text{,} \\
+      T(n - 1) + \Theta(n) & \text{if}\ n > 1\text{.}
+    \end{cases}
+\end{equation*}
+It takes $\Theta(n^2)$.
+\end{framed}
+
+\item[2.3{-}5]{Referring back to the searching problem (see Exercise 2.1-3),
+observe that if the sequence A is sorted, we can check the midpoint of the
+sequence against $\nu$ and eliminate half of the sequence from further
+consideration. The \textbf{\emph{binary search}} algorithm repeats this
+procedure, halving the size of the remaining portion of the sequence each time.
+Write pseudocode, either iterative or recursive, for binary search. Argue that
+the worst-case running time of binary search is $\Theta(\lg n)$.}
+
+\begin{framed}
+The pseudocode is stated below.\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{BinarySearch}
+\SetKwProg{myalg}{}{}{}
+\myalg{\algo{A, s, e, $\nu$}}{%
+  \nl \If{$s > e$}{%
+  \nl   \Return{\upshape{NIL}}\; }
+  \nl $m = \floor{(s + e) / 2}$\;
+  \nl \If{$\nu > A[m]$}{%
+  \nl   \algo{A, $m + 1$, e, $\nu$}\; }
+  \nl \ElseIf{$\nu > A[m]$}{%
+  \nl   \algo{A, s, $m - 1$, $\nu$}\; }
+  \nl \Else{%
+  \nl   \Return{$m$}\; } }{}
+\end{algorithm}
+
+In each recursion level, the algorithm compares $\nu$ with the central element
+$A[m]$. If $\nu = A[m]$, the element was found and it just returns the position.
+If $A[m]$ is bigger (or smaller) than $\nu$, the algorithm discards the left
+half (or the right half) of the array and continues recursively in the remaining
+$\floor{(n - 1) / 2}$ elements. Each recursion element compares $\nu$ with
+a single element of $A$, thus each level takes $\Theta(1)$. Since the number of
+elements in the array is halved in each level, there will be at most $\lg n$
+recursion levels. The algorithm then takes at most
+$\lg n \times \Theta(1) = \Theta(\lg n)$.
+\end{framed}
+
+\item[2.3{-}6]{Observe that the while loop of lines 5{--}7 of the
+\textsc{Insertion-Sort} procedure in Section 2.1 uses a linear search to scan
+(backward) through the sorted subarray $A[1, \dots, j - 1]$. Can we use a binary
+search (see Exercise 2.3-5) instead to improve the overall worst-case running
+time of insertion sort to $\Theta(n \lg n)$?}
+
+\begin{framed}
+No, because even finding the correct position in $\lg n$, after each search the
+algorithm will still need to shift up to $n$ the elements to keep the subarray
+$A[1, \dots, j]$ sorted. The worst-case running time will remain $\Theta(n^2)$.
+\end{framed}
+
+\item[2.3{-}7]{($\star$) Describe a $\Theta(n \lg n)$-time algorithm that, given a set
+$S$ of $n$ integers and another integer $x$, determines whether or not there
+exist two elements in $S$ whose sum is exactly $x$.}
+
+\begin{framed}
+Start by sorting $S$ using \textsc{MergeSort}, which takes $\Theta(n \lg n)$.
+For each element $i$ of $S$, $i = 1, \dots, n$, search the subarray $A[i + 1,
+\dots, n]$ for the element $\nu = x - S[i]$ using \textsc{BinarySearch}. If
+$\nu$ is found, return its position. Otherwise, continue for the next value of
+$i$. It will perform at most $n$ searchs and each search takes $\Theta(\lg n)$.
+The algorithm then takes $\Theta(n \lg n) + n \times \Theta(\lg n) = \Theta(n
+\lg n)$.
+\end{framed}
+
+\end{enumerate}
+
+\pagebreak
+
+{\large Problems}
+
+\begin{enumerate}
+
+\item[2{-}1]{\textbf{\emph{Insertion sort on small arrays in merge sort}}\\
+Although merge sort runs in $\Theta(n \lg n)$ worst-case time and insertion sort
+runs in $\Theta(n^2)$ worst-case time, the constant factors in insertion sort can make
+it faster in practice for small problem sizes on many machines. Thus, it makes
+sense to \textbf{\emph{coarsen}} the leaves of the recursion by using insertion
+sort within merge sort when subproblems become sufficiently small. Consider
+a modification to merge sort in which $n/k$ sublists of length $k$ are sorted
+using insertion sort and then merged using the standard merging mechanism, where
+$k$ is a value to be determined.
+
+\begin{enumerate}
+\item[a.] Show that insertion sort can sort the $n/k$ sublists, each of length
+  $k$, in $\Theta(n k)$ worst-case time.
+\item[b.] Show how to merge the sublists in $\Theta(n \lg(n/k))$ worst-case time.
+\item[c.] Given that the modified algorithm runs in $\Theta(n k + n \lg(n/k))$
+  worst-case time, what is the largest value of $k$ as a function of $n$ for
+  which the modified algorithm has the same running time as standard merge sort,
+  in terms of $\Theta$-notation?
+\item[d.] How should we choose $k$ in practice?
+\end{enumerate}
+}
+
+\begin{framed}
+
+\begin{enumerate}
+\item[(a)] Sort $n/k$ sublists of length $k$ with insertion sort takes
+$n/k \cdot \Theta(k^2) = \Theta(n/k \cdot k^2) = \Theta(nk)$.
+
+\item[(b)] The naive solution is to extend the standard merging procedure to
+merge n/k sublists at the same time, instead of two. Since there is $n/k$
+sublists, in each iteration the algorithm takes $\Theta(n/k)$ to select the
+lowest element among all the sublists. Since there are $n$ elements (thus $n$
+iterations), the total complexity is $n \cdot \Theta(n/k) = \Theta({n^2}/k)$.
+
+We can accomplish the requested $\Theta(n \lg(n/k))$ complexity by merging the
+sublists pairwise, rather than merging them all at the same time. Lets first
+consider the case in which the number of sublists is even. In the first level
+there will be $n/(2k)$ pairs of sublists to merge and, since each sublist has
+length $k$, each merge will take $\Theta(2k)$. Thus, the first level will take
+$n/(2k) \cdot \Theta(2k) = \Theta(n)$. The next level will have half the number
+of sublists and will take $n/(4k) \cdot \Theta(4k) = \Theta(n)$.  Since the
+number of sublists is reduced by two on each level, the total number of levels
+will be $\lg(n/k)$.  Thus, the total cost is
+$\Theta(n) \cdot \lg(n/k) = \Theta(n \lg(n/k))$. When the number of sublists is
+odd, it will need one additional level to merge the remaining sublist. Thus,
+the total cost is $\Theta(n \lg(\ceil{n/k}))$.
+
+\item[(c)] When $k = 1$ (smallest possible value for $k$), the modified
+algorithm takes $\Theta(n \cdot 1 + n \lg (n/1)) = \Theta(n + n \lg n)$. When
+$k$ grows, the first term grows and the second term decreases. Thus, since the
+second term can not be greater than $n \lg n$, we just need to pay attention to
+the first term. The algorithm then takes more than $\Theta(n \lg n)$ when
+$nk > n \lg n \rightarrow k > \lg n$. Thus, the largest value of $k$ is $\lg n$.
+
+\item[(d)] It depends of the constant factors of insertion sort and merge sort.
+Since the cost of these constants may vary between different machines, in
+practice one should choose the largest value of $k$ in which insertion sort
+is faster then merge sort in a given machine.
+\end{enumerate}
+
+\end{framed}
+
+\item[2{-}2]{\textbf{\emph{Correctness of bubblesort}}\\
+Bubblesort is a popular, but inefficient, sorting algorithm. It works by
+repeatedly swapping adjacent elements that are out of order.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon%
+\BlankLine
+\SetKwFunction{algo}{BubbleSort}
+\SetKwProg{myalgo}{}{}{}
+\myalgo{\algo{A}}{%
+ \nl \For{$i = 1$ \KwTo $A.length - 1$}{%
+ \nl   \For{$j = A.length$ \upshape{\textbf{downto}} $i + 1$}{%
+ \nl     \If{$A[j] < A[j - 1]$}{%
+ \nl       exchange $A[j]$ with $A[j - 1]$\; } } } }{}
+\end{algorithm}
+
+\begin{enumerate}
+\item[a.] Let $A'$ denote the output of \textsc{BubbleSort(A)}. To prove that
+\textsc{BubbleSort} is correct, we need to prove that it terminates and that
+\begin{equation*}
+  A'[1] \le A'[2] \le \dots \le A'[n].
+\end{equation*}
+where $n = A.length$. In order to show that \textsc{BubbleSort} actually sorts,
+what else do we need to prove?
+
+\item[b.] State precisely a loop invariant for the \textbf{for} loop in lines
+2{--}4, and prove that this loop invariant holds. Your proof should use the
+structure of the loop invariant proof presented in this chapter.
+
+\item[c.] Using the termination condition of the loop invariant proved in part
+(b), state a loop invariant \textbf{for} the for loop in lines 1{--}4 that will
+allow you to prove in- equality (2.3). Your proof should use the structure of
+the loop invariant proof presented in this chapter.
+
+\item[d.] What is the worst-case running time of bubblesort? How does it compare
+  to the running time of insertion sort?
+\end{enumerate}
+}
+
+\newpage
+
+\begin{framed}
+
+\begin{enumerate}
+\item[(a)] $A'$ must be a permutation of $A$.
+
+\item[(b)] Here is the \emph{loop invariant}. At the start of each iteration $j$
+  of the for loop of lines 2{--}4, $A[j]$ is the smallest element of the subarray
+$A[j, \dots, A.length]$.
+\begin{itemize}
+  \item \textbf{Initialization.} Prior to the first iteration of the loop, $j
+    = n = A.length$, so the subarray $A[j, \dots, A.length]$ has only one
+    element, and $A[j]$ is therefore the smallest element of the subarray $A[j,
+    \dots, A.length]$.
+  \item \textbf{Maintenance.} To see that each iteration maintains the loop
+    invariant, let's suppose that $A[j - 1] > A[j]$. Because $A[j]$ is the
+    smallest element of the subarray $A[j, \dots, A.length]$, after line
+    4 exchanges the position of the elements $A[j]$ and $A[j - 1]$, $A[j - 1]$
+    will be the smallest element of the subarray $A[j - 1, \dots, A.length]$.
+    Incrementing $j$ (in the for loop update) reestablishes the loop invariant
+    for the next iteration. If instead $A[j - 1] < A[j]$, nothing needs to be
+    done and $A[j - 1]$ is already the smallest element of the subarray $A[j
+    - 1, \dots, A.length]$.
+  \item \textbf{Termination.} At termination, $j = i$. By the loop invariant
+    $A[i]$ is the smallest element of the subarray $A[i, \dots, A.length]$.
+\end{itemize}
+
+\item[(c)] Here is the \emph{loop invariant}. At the start of each iteration $i$
+of the for loop of lines 1{--}4, the subarray $A[1, \dots, i - 1]$ consists of
+the $i$ smallest elements of $A$ in sorted order.
+\begin{itemize}
+  \item \textbf{Initialization.} Prior to the first iteration of the loop, we
+    have $i = 1$, so that the subarray $A[1, \dots, i - 1]$ is empty. This empty
+    subarray contains the $i - 1 = 0$ smallest elements of $A$ in sorted order.
+  \item \textbf{Maintenance.} In each iteration $i$, the subarray $A[1, \dots,
+    i - 1]$ constains the $i - 1$ smallest elements of $A$ in sorted order.
+    After the for loop of lines 2{--}4, $A[i]$ will be the smallest element of
+    the subarray $A[i, \dots, A.length]$ and thus the i-th smallest element of
+    $A$. This implies that $A[1, \dots, i]$ will contain the $i$ smallest
+    elements of $A$ in sorted order. Incrementing $i$ (in the for loop update)
+    reestablishes the loop invariant for the next iteration.
+  \item \textbf{Termination.} At termination, $i = A.length$. By the loop
+    invariant the subarray $A[1, \dots, A.length - 1]$ consists of the smallest
+    elements of $A$ in sorted order. Since $A[A.length]$ can only be the largest
+    element of $A$, it is already in its correct position and the subarray $A[1,
+    \dots, A.length]$ consists of the elements of $A$ in sorted order.
+\end{itemize}
+
+\item [(d)] The worst running time of \textsc{Bubble-Sort} is $\Theta(n^2)$,
+which is the same of \textsc{Insertion-Sort}. However, the best running time of
+\textsc{Insertion-Sort} is $\Theta(n)$ (when the array is already sorted) and
+\textsc{Bubble-Sort} runs always in $\Theta(n^2)$.
+\end{enumerate}
+
+\end{framed}
+
+\item[2{-}3]{\textbf{\emph{Correctness of Horner's rule}}\\
+The following code fragment implements Horner's rule for evaluating a polynomial
+
+\begin{equation*}
+\begin{split}
+  P(x) & = \sum_{k=0}^{n}{a_k x^k}\\
+       & = a_0 + x(a_1 + x(a_2 + \cdots + x(a_{n - 1} + x a_n) \cdots)),
+\end{split}
+\end{equation*}
+given the coefficients $a_0, a_1, \dots, a_n$ and a value for $x$:
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon%
+\nl $y = 0$\;
+\nl \For{i = n \upshape{\textbf{downto}} 0}{%
+\nl $y = a_i + x \cdot y$\; }
+\end{algorithm}
+
+\begin{enumerate}
+\item[a.] In terms of $\Theta$-notation, what is the running time of this code
+fragment for Horner's rule?
+
+\item[b.] Write pseudocode to implement the naive polynomial-evaluation
+algorithm that computes each term of the polynomial from scratch. What is the
+running time of this algorithm? How does it compare to Horner's rule?
+
+\item[c.] Consider the following loop invariant:
+
+At the start of each iteration of the \textbf{for} loop of lines 2{--}3,
+\begin{equation*}
+  y = \sum_{k = 0}^{n - (i + 1)}{a_{k + i + 1} x^k}.
+\end{equation*}
+Interpret a summation with no terms as equaling 0. Following the structure of
+the loop invariant proof presented in this chapter, use this loop invariant
+to show that, at termination, $y = \sum_{k = 0}^n{a_k x^k}$.
+
+\item[d.] Conclude by arguing that the given code fragment correctly evaluates
+a polynomial characterized by the coefficients $a_0, a_1, \dots, a_n$.
+\end{enumerate}
+}
+
+\newpage
+
+\begin{framed}
+\begin{enumerate}
+  \item[(a)] Since the body of the for loop of lines 2{--}3 consists of constant
+    operations, the running time depends on the number of iterations of the
+    loop. The running time is then $\sum_{i=0}^n 1 = n + 1 = \Theta(n)$.
+
+\item[(b)] Here is the pseudocode of the \textsc{NaivePolynomialEvaluation}
+algorithm:\\
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon%
+ \nl $y = 0$\;
+ \nl \For{$i = 0$ \KwTo $n$}{%
+ \nl   $y_i = a_i$\;
+ \nl   \For{$k = 1$ \KwTo $i$}{%
+ \nl     $y_i = y_i x$\; }
+ \nl   $y = y + y_i$\; }{}
+\end{algorithm}
+
+The running time of the above algorithm is
+$\sum_{i=0}^n i = (n (n + 1))/2 = n^2/2 - n/2 = \Theta(n^2)$, which is slower
+than the $\Theta(n)$ running time of Horner's rule.
+
+\item[(c)] Here is the loop invariant proof:
+\begin{itemize}
+  \item \textbf{Initialization.} Prior to the first iteration of the for loop of
+    lines 2{--}3, we have $y = 0$ and $i = n$. Replacing $i = n$ on the above
+    loop invariant equation we have:
+    \begin{equation*}
+      y = \sum_{k = 0}^{n - n - 1}{a_{k + n + 1} x^k}
+        = \sum_{k = 0}^{-1}{a_{k + n + 1} x^k}
+        = 0,
+    \end{equation*}
+    which correctly corresponds to the initial value of $y$ on line 1.
+  \item \textbf{Maintenance.} In each iteration $i$ of the loop, the previous
+    value of $y$ is multiplied by $x$ and incremented by $a_i$ (line 3).
+    Performing these two operations on the above loop invariant equation for an
+    iteration $i$, we have:
+    \begin{equation*}
+      \begin{split}
+        a_i + x \cdot \left(\sum_{k = 0}^{n - i - 1}{a_{k + i + 1} x^k}\right) =
+        a_i + \left(\sum_{k = 0}^{n - i - 1}{a_{k + i + 1} x^{k+1}}\right) =
+        a_i + \left(\sum_{k = 1}^{n - i}{a_{k + i} x^k}\right) =
+        \left(\sum_{k = 0}^{n - i}{a_{k + i} x^k}\right),
+      \end{split}
+    \end{equation*}
+    which correctly corresponds to the loop invariant equation in the iteration
+    $i - 1$ (next iteration, after iteration $i$).
+  \item \textbf{Termination.} At termination, we have $i = -1$, so that:
+    \begin{equation*}
+      y = \sum_{k = 0}^{n - (-1 + 1)}{a_{k + -1 + 1} x^k}
+        = \sum_{k = 0}^n{a_k x^k}.
+    \end{equation*}
+\end{itemize}
+
+\item[(d)] Since the loop invariant holds for all iterations and, at
+termination, the loop invariant corresponds exactly to the polynomial
+definition, we can assure that the code fragment correctly evaluates the
+polynomial characterized by the coefficients $a_0, a_1, \dots, a_n$.
+\end{enumerate}
+\end{framed}
+
+\item[2{-}4]{\textbf{\emph{Inversions}}\\
+Let $A[1, \dots, n]$ be an array of $n$ distinct numbers. If $i < j$ and $A[i]
+> A[j]$, then the pair $(i, j)$ is called an \textbf{\emph{inversion}} of A.
+
+\begin{enumerate}
+\item[a.] List the five inversions of the array
+$\langle 2, 3, 8, 6, 1 \rangle$.
+
+\item[b.] What array with elements from the set \{1, 2, \dots, n\}
+has the most inversions? How many does it have?
+
+\item[c.] What is the relationship between the running time of insertion sort
+and the number of inversions in the input array? Justify your answer.
+
+\item[d.] Give an algorithm that determines the number of inversions in any
+permutation on $n$ elements in $\Theta(n \lg n)$ worst-case time.
+(\emph{Hint: modify merge sort}.)
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+  \item[(a)] (1, 4), (1, 5), (2, 5), (3, 5), (4, 5).
+  \item[(b)] $\{n, n - 1, n - 2, \dots, 2, 1\}$.
+    It has $\binom{n}{2} = n (n - 1) / 2$ inversions.
+  \item[(c)] The number of operations of \textsc{Insertion-Sort} in an array
+    $A$ is the same as the number of inversions in $A$.
+  \item[(d)] The following pseudocode modifies \textsc{Merge-Sort} to count the
+    number of inversions in $\Theta(n \lg n)$.\\
+    \begin{algorithm}[H]
+    \SetAlgoNoEnd\DontPrintSemicolon%
+    \BlankLine
+    \SetKwFunction{algo}{Inversions}
+    \SetKwFunction{algomerge}{MergeInversions}
+    \SetKwProg{myalgo}{}{}{}
+    \myalgo{\algo{A, p, r}}{%
+      \nl $inv = 0$\;
+      \nl \If{$p < r$}{%
+      \nl   $q = \floor{(p + r) / 2}$\;
+      \nl   $inv = inv$ + \algo{A, p, q} + \algo{A, q + 1, r} + \algomerge{A, p, q, r}\;}
+      \nl \Return{inv}
+    }{}
+    \end{algorithm}
+
+    \begin{algorithm}[H]
+    \SetAlgoNoEnd\DontPrintSemicolon
+    \BlankLine
+    \SetKwFunction{algo}{MergeInversions}
+    \SetKwProg{myalg}{}{}{}
+    \myalg{\algo{A, p, q, r}}{%
+      \nl $inv = 0$\;
+      \nl $n_1 = q - p + 1$\;
+      \nl $n_2 = r - q$\;
+      \nl let $L[1, \dots, n_1 + 1]$ and $R[1, \dots, n_2 + 1]$ be new arrays\;
+      \nl \For{$i = 1$ \KwTo $n_1$}{%
+      \nl   $L[i] = A[p + i - 1]$\; }
+      \nl \For{$j = 1$ \KwTo $n_2$}{%
+      \nl  $R[j] = A[q + j]$\; }
+      \nl $L[n_1 + 1] = \infty$\;
+      \nl $L[n_2 + 1] = \infty$\;
+      \nl $i = 1$\;
+      \nl $j = 1$\;
+      \nl \For{$k = p$ \KwTo $r$}{%
+        \nl  \If{$L[i] \le R[j]$}{%
+      \nl    $i = i + 1$\; }
+      \nl  \Else{%
+        \nl    $inv = inv + (n_1 - i + 1)$\;
+      \nl    $j = j + 1$\; } }
+      \nl \Return{inv}\;
+    }{}
+    \end{algorithm}
+\end{enumerate}
+\end{framed}
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,601 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english,brazil,brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 3 {--} Growth of Functions}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 3.1 {--} Asymptotic notation}
+
+\begin{enumerate}
+
+\item[3.1{-}1]{Let $f(n)$ and $g(n)$ be asymptotically nonnegative functions.
+  Using the basic definition of $\Theta$-notation, prove that
+  $\max(f(n), g(n)) = \Theta(f(n) + g(n))$.}
+
+\begin{framed}
+Since $f(n)$ and $g(n)$ are both asymptotically nonnegative,
+\[
+\Exists n_0 \mid f(n) \ge 0\;g(n) \ge 0\;\Forall n \ge n_0.
+\]
+
+From the definition of $\Theta(\cdot)$, we have
+\[
+\Exists c_1\;c_2\;n_0\in\mathbb{R}^+ \mid
+c_1 f(n) + c_1 g(n) \le \max(f(n), g(n)) \le c_2 f(n) + c_2 g(n)\;
+\Forall n \ge n_0.
+\]
+
+If $f(n) \ge g(n)$, we have
+\[
+c_1 f(n) + c_1 g(n) \le f(n) \le c_2 f(n) + c_2 g(n).
+\]
+
+
+The right-hand-side inequality is trivially satisfied with $c_2 = 1$. To find
+\(c_1\), we notice that,
+\[
+f(n) + g(n) \le 2f(n),
+\]
+
+and say,
+\[
+c_1 = \frac{1}{2}.
+\]
+
+The demonstration is similar for $g(n) > f(n)$, with $c_1 = 1/2$ and $c_2 = 1$.
+\end{framed}
+
+\item[3.1{-}2]{Show that for any real constants $a$ and $b$, where
+$b > 0$, $(n + a)^b = \Theta(n^b)$.}
+
+\begin{framed}
+From the definition of \(\Theta(\cdot)\), we have
+\[
+\Exists c_1\;c_2\;n_0\in\mathbb{R}^+ \mid c_1 n^b \leq (n+a)^b \leq c_2 n^b\;
+\Forall n \ge n_0,
+\]
+
+and from the binomial theorem, we have
+\[
+(n + a)^b = \binom{b}{0} n^b a^0 + \binom{b}{1} n^{b - 1} a^1 + \cdots +
+            \binom{b}{b - 1} n^1 a^{b - 1} + \binom{b}{b} n^0 a^b.
+\]
+
+To find \(c_1\), we notice that for $n$ big enough,
+\[
+\binom{b}{i} n^{b - i} a^i + \binom{b}{i + 1} n^{b - (i + 1)} a^{i + 1} \ge 0
+\quad \forall\ i \in 0, 2, \dots ,b,
+\]
+
+which implies
+\[
+\binom{b}{0} n^b a^0 + \binom{b}{1} n^{b - 1} a^1 \le (n + a)^b,
+\]
+
+and also for $n$ big enough,
+
+\[
+\frac{n^b}{2} \le n^b + \binom{b}{1} n^{b - 1} a^1,
+\]
+
+which implies
+\[
+\frac{n^b}{2} \le (n + a)^b,
+\]
+
+and say
+\[
+c_2 = \frac{1}{2}.
+\]
+
+To find \(c_2\), we notice that for $n$ big enough,
+\[
+n^b = \binom{b}{0} n^b a^0
+\geq \binom{b}{i} n^{b - i} a^i \quad \forall\ i \in 1, \dots ,b,
+\]
+which implies
+\[
+(n + a)^b \leq (b + 1) n^b,
+\]
+
+and say
+\[
+c_2 = b + 1.
+\]
+\end{framed}
+
+\item[3.1{-}3]{Explain why the statement, ``The running time of algorithm $A$ is
+  at least $O(n^2)$,'' is meaningless.}
+
+\begin{framed}
+Because the $O$-notation only bounds from the top, not from the bottom.
+\end{framed}
+
+\item[3.1{-}4]{Is $2^{n+1} = O(2^n)$? Is $2^{2n} = O(2^n)$?}
+
+\begin{framed}
+From the definition of $O(\cdot)$, we have
+\[
+\Exists c\;n_0\in\mathbb{R}^+ \mid 0 \leq 2^{n+1} \leq c \cdot 2^n\;
+\Forall n \ge n_0.
+\]
+
+To find $c$, we notice that,
+\[
+2^{n+1} = 2 \cdot 2^n,
+\]
+
+and say $c = 2$ and $n_0 = 0$.
+
+From the definition of $O(\cdot)$, we have
+\[
+\Exists c\;n_0\in\mathbb{R}^+ \mid 0 \leq 2^{2n} \leq c \cdot 2^n\;
+\Forall n \ge n_0.
+\]
+
+To show that $2^{2n} \neq O(2^n)$, we notice that,
+\[
+2^{2n} = 2^n \cdot 2^n,
+\]
+
+which implies
+\[
+c \ge 2^n,
+\]
+which is not possible, since $c$ is a constant and $n$ is not.
+\end{framed}
+
+\item[3.1{-}5]{Prove Theorem 3.1.}
+
+\begin{framed}
+To prove
+\[
+f(n) = \Theta(g(n)) \iff f(n) = O(g(n)) \wedge f(n) = \Omega(g(n)).
+\]
+
+we need to show
+\[
+f(n) = O(g(n)) \wedge f(n) = \Omega(g(n)) \rightarrow f(n) = \Theta(g(n)),
+\]
+
+and
+\[
+f(n) = \Theta(g(n)) \rightarrow f(n) = O(g(n)) \wedge f(n) = \Omega(g(n)).
+\]
+
+From the definition of $O(\cdot)$, we have
+\[
+\Exists c_1\;n_1\in\mathbb{R}^+ \mid 0 \le f(n) \le c_1g(n)\;\Forall n \ge n_1,
+\]
+
+and from the definition of $\Omega(\cdot)$, we have
+\[
+\Exists c_2\;n_2\in\mathbb{R}^+ \mid 0 \le c_2g(n) \le f(n)\;\Forall n \ge n_2,
+\]
+
+which implies
+\[
+\Exists c_1\;c_2\in\mathbb{R}^+\;n_0 = \max(n_1, n_2) \mid
+c_2g(n) \leq f(n) \leq c_1g(n)\;\Forall n \ge n_0 \iff f(n) = \Theta(g(n)).
+\]
+
+From the definition of $\Theta(\cdot)$, we have
+\[
+\Exists c_1\;c_2\;n_0\in\mathbb{R}^+ \mid c_2g(n) \leq f(n) \leq c_1g(n)\;
+\Forall n \ge n_0,
+\]
+
+which implies
+\[
+\Exists c_1\;n_0\in\mathbb{R}^+ \mid 0 \leq f(n) \leq c_1 g(n)\;
+\Forall n \ge n_0 \iff f(n) = O(g(n)),
+\]
+
+\[
+\Exists c_2\;n_0\in\mathbb{R}^+ \mid c_2 g(n) \leq f(n) \leq 0\;
+\Forall n \ge n_0 \iff f(n) = \Omega(g(n)).
+\]
+
+\end{framed}
+
+\newpage
+
+\item[3.1{-}6]{Prove that the running time of an algorithm is $\Theta(g(n))$ if
+  and only if its worst-case running time is $O(g(n))$ and its best-case running
+  time is $\Omega(g(n))$.}
+
+\begin{framed}
+Let $f_b(n)$ and $f_w(n)$ be the best and worst-case running times of algorithm
+$A$, respectivelly.
+
+If the running time of $A$ is $\Theta(g(n))$, we have
+\[
+f_b(n) = \Theta(g(n)),
+\]
+
+and
+\[
+f_w(n) = \Theta(g(n)).
+\]
+
+From Theorem 3.1,
+\[
+f_b(n) = \Theta(g(n)) \iff f_b(n) = O(g(n)) \wedge f_b(n) = \Omega(g(n)),
+\]
+
+and
+\[
+f_w(n) = \Theta(g(n)) \iff f_w(n) = O(g(n)) \wedge f_w(n) = \Omega(g(n)).
+\]
+
+\end{framed}
+
+\item[3.1{-}7]{Prove that $o(g(n)) \cap \omega(g(n))$ is the empty set.}
+
+\begin{framed}
+From the definition of $o(\cdot)$, we have
+\[
+o(g(n)) = \{ f(n) : \Forall c_1 > 0\;\Exists n_1 \in \mathbb{R}^+ \mid
+             0 \le f(n) < c_1g(n)\;\Forall n \ge n_1 \},
+\]
+
+and from the definition of $\omega(\cdot)$, we have
+\[
+\omega(g(n)) = \{ f(n) : \Forall c_2 > 0\;\Exists n_2\in\mathbb{R}^+ \mid
+                  0 \le c_2g(n) < f(n)\;\Forall n \ge n_2 \}.
+\]
+
+Thus,
+\[
+o(g(n)) \cap \omega(g(n)) =
+\{ f(n) : \Forall c_1 > 0\;\Forall c_2>0\;\Exists n_0\in\mathbb{R}^+\mid
+   0 \le c_2g(n) < f(n) < c_1g(n)\;\Forall n \ge n_2 \},
+\]
+which is the empty set since, for very large $n$, $f(n)$ cannot be less than
+$c_1 g(n)$ and greater than $c_2 g(n)$ for all $c_1, c_2 > 0$.
+
+\end{framed}
+
+\item[3.1{-}8]{We can extend our notation to the case of two parameters $n$ and
+$m$ that can go to infinity independently at different rates. For a given
+$g(n, m)$, we denote by $O(g(n, m))$ the set of functions
+\[
+O(g(n, m)) = \{{f(n, m) : \text{there exist positive constants } c, n_0,
+\text{and\ } m_0 \text{\ such that\ } 0 \le f(n, m) \le c g(n, m)
+\text{\ for all\ } n \ge n_0 \text{\ and\ } m \ge m_0}\}.
+\]
+
+Give corresponding definitions for $\Omega(g(n, m))$ and $\Theta(g(n, m))$.
+}
+
+\begin{framed}
+We denote by $\Omega(g(n, m))$ the set of functions
+\[
+\Omega(g(n, m)) = \{f(n, m) : \Exists c\;n_0\;m_0 \in \mathbb{R}^+ \mid
+                    0 \le cg(n, m)) \le f(n, m)\;
+                    \Forall n \ge n_0\;\Forall m \ge m_0\}.
+\]
+
+We denote by $\Theta(g(n, m))$ the set of functions
+\[
+\Theta(g(n, m)) = \{f(n, m) : \Exists c_1\;c_2\;n_0\;m_0\in\mathbb{R}^+\mid
+                    0 \le c_1g(n, m) \le f(n, m) \le c_2g(n, m)\;
+                    \Forall n \ge n_0\;\Forall m \ge m_0\}.
+\]
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 3.2 {--} Standard notations and common functions}
+
+\begin{enumerate}
+
+\item[3.2{-}1]{Show that if $f(n)$ and $g(n)$ are monotonically increasing
+functions, then so are the functions $f(n) + g(n)$ and $f(g(n))$, and if
+$f(n)$ and $g(n)$ are in addition nonnegative, then $f(n) \cdot g(n)$ is
+monotonically increasing.}
+
+\begin{framed}
+If $f(n)$ and $g(n)$ are both monitonically increasing and $n \le m$, we have
+\[
+f(n) \le f(m) \quad \text{and} \quad g(n) \le g(m),
+\]
+
+which implies that
+\[
+f(n) - f(m) \le 0 \quad \text{and} \quad g(n) - g(m) \le 0.
+\]
+
+Adding the above inequalities together, we have
+\[
+f(n) - f(m) + g(n) - g(m) \le 0 \rightarrow
+f(n) + g(n) \le f(m) + g(m),
+\]
+
+which shows that $f(n) + g(n)$ is monitonically increasing.
+
+Also, let $g(n) = p$ and $g(m) = q$.
+Since $f(n) \le f(m)$ and $g(n) \le g(m)$, we have
+\[
+f(p) \le f(q) \rightarrow f(g(n)) \le f(g(m)),
+\]
+which shows that $f(g(n))$ is monitonically increasing.
+
+If in addition, $f(\cdot) \ge 0$ and $g(\cdot) \ge 0$, we have
+\[
+f(n) \le f(m) \rightarrow f(n) g(n) \le f(m) g(n) \rightarrow f(n) g(n) \le f(m) g(m),
+\]
+which shows that $f(n) \cdot g(n)$ is monitonically increasing.
+\end{framed}
+
+\item[3.2{-}2]{Prove equation (3.16).}
+
+\begin{framed}
+For all real $a > 0, b > 0, c > 0$,
+\[
+a^{\log_b c} = a^{\frac{\log_a c}{\log_a b}}
+             = \left(a^{\log_a c}\right)^{\frac{1}{\log_a b}}
+             = c^{\frac{1}{\log_a b}}
+             = c^{\log_b a}.
+\]
+\end{framed}
+
+\item[3.2{-}3]{Prove equation (3.19).
+Also prove that $n! = \omega(2^n)$ and $n! = o(n^n)$.}
+
+\begin{framed}
+Using the Stirling's approximation, we have
+\begin{equation*}
+\begin{split}
+  \lg(n!) & \approx \lg\left(\sqrt{2 \pi n} \binom{n}{e}^n \left(1 + \Theta\left(\frac{1}{n}\right)\right)\right)\\
+          & = \lg{(\sqrt{2 \pi n})} + \lg(\sqrt{n}) + \lg(n^n) - \lg(e^n) + \Theta(\lg(1/n))\\
+          & = \Theta(1) + 1/2 \lg(n) + n \lg n - n \lg e + \Theta(\lg(1/n))\\
+          & = \Theta(1) + \Theta(\lg n) + \Theta(n \lg n) - \Theta(n) + \Theta(\lg(1/n))\\
+          & = \Theta(n \lg n),
+\end{split}
+\end{equation*}
+which proves Equation (3.19).
+
+We have
+\[
+  n! = n \cdot (n - 1) \cdot (n - 2) \cdots 2 \cdot 1
+     < \underbrace{n \cdot n \cdot n \cdots}_\text{n times}
+     = n^n\;\Forall n \ge 2,
+\]
+which implies
+\[
+  n! = o(n^n).
+\]
+
+We have
+\[
+  n! = n \cdot (n - 1) \cdot (n - 2) \cdots 2 \cdot 1
+     > \underbrace{2 \cdot 2 \cdot 2 \cdots}_\text{n times}
+     = 2^n\;\Forall n \ge 4,
+\]
+which implies
+\[
+  n! = w(2^n).
+\]
+
+\end{framed}
+
+\newpage
+
+\item[3.2{-}4]{($\star$) Is the function $\ceil{\lg n}{!}$ polynomially bounded?
+Is the function $\ceil{\lg \lg n}{!}$ polynomially bounded?}
+
+\begin{framed}
+A function $f(n)$ is polynomially bounded if there are constants $c, k, n_0$
+such that for all $n \ge n_0$, $f(n) \le c n^k$. Thus, $\lg(f(n)) \le c k \lg{n}$.
+
+We have
+\[
+\lg(\ceil{\lg{n}}!) = \Theta(\ceil{\lg{n}} \lg(\ceil{\lg{n}})) = \Theta(\lg{n} \lg{\lg{n}}) = w(\lg{n}),
+\]
+
+which implies that $\lg(\ceil{\lg{n}}!) > c k \lg{n}$, i.e., $\ceil{\lg{n}}{!}$
+is not polynomially bounded.
+
+We have
+\[
+\lg(\ceil{\lg{\lg{n}}}!) = \Theta(\ceil{\lg{\lg{n}}}\lg{\ceil{\lg{\lg{n}}}})
+                          = \Theta(\lg{\lg{n}} \lg{\lg{\lg{n}}})
+                          = o(\lg^2{\lg{n}})
+                          = o(\lg^2{n})
+                          = o(\lg{n}),
+\]
+which implies that $\lg(\ceil{\lg{\lg{n}}}!) \le c k \lg{n}, i.e.,
+\ceil{\lg{\lg{n}}}{!}$ is polynomially bounded.
+
+\end{framed}
+
+\item[3.2{-}5]{($\star$) Which is asymptotically larger:
+$\lg(\lg^\star n)$ or $\lg^\star(\lg n)$}?
+
+\begin{framed}
+Let's assume that $\lg^*(x) = k$.
+
+We have
+\[
+\lg(\lg^*{x}) = \lg{k},
+\]
+and
+\[
+\lg^*(\lg{x}) = k - 1,
+\]
+since the inner logarithm that is applied to $x$ will reduce the number of
+iterations of the iterative logarithm by 1.
+
+Thus, since $(k - 1)$ is asymptotically larger than $\lg(k)$, $\lg^*(\lg{x})$ is
+also asymptotically larger than $\lg(\lg^*{x})$.
+\end{framed}
+
+\item[3.2{-}6]{Show that the golden ration $\phi$ and its conjugate $\hat\phi$}
+both satisfy the equation $x^2 = x + 1$.
+
+\begin{framed}
+The demonstration follows directly from the formulas of $\phi$ and $\hat\phi$.
+\[
+\phi^2 = \left(\frac{1 + \sqrt{5}}{2}\right)^2 = \frac{1 + 2 \sqrt{5} + 5}{4}
+       = \frac{2 \sqrt{5} + 6}{4} = \frac{\sqrt{5} + 3}{2}
+       = \frac{1 + \sqrt{5}}{2} + 1 = \phi + 1.
+\]
+
+\[
+\hat\phi^2 = \left(\frac{1 - \sqrt{5}}{2}\right)^2 = \frac{1 - 2 \sqrt{5} + 5}{4}
+           = \frac{6 - 2 \sqrt{5}}{4} = \frac{3 - \sqrt{5}}{2}
+           = \frac{1 - \sqrt{5}}{2} + 1 = \hat\phi + 1.
+\]
+\end{framed}
+
+\item[3.2{-}7]{Prove by induction that the $i$th Fibonacci number satisfies the
+equality
+\[
+F_i = \frac{\phi^i - \hat\phi^i}{\sqrt{5}},
+\]
+where $\phi$ is the golden ratio and $\hat\phi$ is its conjugate.
+}
+
+\begin{framed}
+We have that
+\[
+F_0 = \frac{\phi^0 - \hat\phi^0}{\sqrt{5}} = \frac{1 - 1}{\sqrt{5}} = 0,
+\]
+and
+\[
+F_1 = \frac{\phi^1 - \hat\phi^1}{\sqrt{5}}
+    = \frac{1 + \sqrt{5} - 1 + \sqrt{5}}{2 \sqrt{5}}
+    = \frac{2 \sqrt{5}}{2 \sqrt{5}} = 1.
+\]
+
+which are the correct Fibonacci values for $i = 0$ and $i = 1$. Then we have the inductive step:
+\begin{equation*}
+\begin{split}
+F_i + F_{i + 1} &= \frac{\phi^i + \hat\phi^i}{\sqrt{5}} +
+                   \frac{\phi^{i + 1} + \hat\phi^{i + 1}}{\sqrt{5}}\\
+                &= \frac{\phi^i + \phi^{i + 1} - (\hat\phi^i + \hat\phi^{i + 1})}{\sqrt{5}}\\
+                &= \frac{\phi^i (1 + \phi) - \hat\phi^i (1 + \phi)}{\sqrt{5}}\\
+                &= \frac{\phi^i \phi^2 - \hat\phi^i \hat\phi^2}{\sqrt{5}}\\
+                &= \frac{\phi^{i + 2} - \hat\phi^{i + 2}}{\sqrt{5}} = F_{i + 2}.
+\end{split}
+\end{equation*}
+\end{framed}
+
+\item[3.2{-}8]{Show that $k \ln k = \Theta(n)$ implies $k = \Theta(n / \ln n)$.}
+
+\begin{framed}
+From the symmetry of $\Theta$, we have
+\[
+k \ln k = \Theta(n) \rightarrow n = \Theta(k \ln k),
+\]
+and
+\[
+\ln n = \Theta(\ln(k \ln k)) = \Theta(\ln k \ln \ln k) = \Theta(\ln k).
+\]
+Thus,
+\[
+\frac{n}{\ln n} = \frac{\Theta(k \ln k)}{\Theta(\ln k \ln \ln k)}
+                = \Theta\left(\frac{k \ln k}{\ln k \ln \ln k}\right)
+                = \Theta(k),
+\]
+which implies
+\[
+k = \Theta\left(\frac{n}{\ln n}\right).
+\]
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Problems}
+
+\vspace{0.8em}
+Skipped for later.
+
+\end{document}

@@ -1,0 +1,441 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Appendix A {--} Summations}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section A.1 {--} Summation formulas and properties}
+
+\begin{enumerate}
+
+\item[A.1{-}1] {Find a simple formula for $\sum_{k = 1}^{n} (2k - 1)$.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} (2k - 1) &= \sum_{k = 1}^{n} 2k - \sum_{k = 1}^{n} 1\\
+                            &= 2 \sum_{k = 1}^{n} k - n\\
+                            &= 2 \cdot \frac{1}{2} n (n + 2) - n\\
+                            &= n^2 + n - n\\
+                            &= n^2.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.1{-}2] {($\star$) Show that
+$\sum_{k = 1}^{n} 1/(2k - 1) = \ln(\sqrt n) + O(1)$ by manipulating the harmonic
+series.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} 1/(2k - 1) &= \frac{1}{1} + \frac{1}{3} + \frac{1}{5} + \dots + \frac{1}{2n - 3} + \frac{1}{2n - 1}\\
+                              &= \left(\frac{1}{1} + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{2n}\right)
+                              - \frac{1}{2} \left(1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{n}\right)\\
+                              &= \sum_{k = 1}^{2n} \frac{1}{k} - \frac{1}{2} \sum_{k - 1}^{n} \frac{1}{k}\\
+                              &= \ln{2n} + O(1) - \frac{1}{2} (\ln n + O(1))\\
+                              &= \ln n + \ln 2 + O(1) - \frac{1}{2} \ln n - \frac{1}{2} O(1)\\
+                              &= \frac{1}{2} \ln n + O(1)\\
+                              &= \ln(\sqrt n) + O(1).
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.1{-}3] {Show that $\sum_{k = 0}^{\infty} k^2 x^k = x(1 + x)/(1 - x)^3$
+for $0 < |x| < 1$.}
+
+\begin{framed}
+From Equation A.8, we have
+\[
+  \sum_{k = 0}^{\infty} k x^k = \frac{x}{(1 - x)^2}.
+\]
+differentiating both sides and multiplying by $x$, we have
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 0}^{\infty} k^2 x^k &= x \cdot \frac{1 \cdot (1 - x)^2 - (2 \cdot (1 - x) \cdot (-1) \cdot x)}{(1 - x)^4}\\
+                                &= x \cdot \frac{(1 - x)(1 - x) + (1 - x) \cdot 2x}{(1 - x)^4}\\
+                                &= x \cdot \frac{(1 - x) + 2x}{(1 - x)^3}\\
+                                &= \frac{x(1 + x)}{(1 - x)^3}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\newpage
+
+\item[A.1{-}4] {($\star$) Show that $\sum_{k = 0}^{\infty} (k - 1)/2^k = 0$.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 0}^{\infty} (k - 1)/2^k
+  &= \sum_{k = 0}^{\infty} \left( \frac{k}{2^k} - \frac{1}{2^k} \right)\\
+  &= \sum_{k = 0}^{\infty} k \frac{1}{2^k} - \sum_{k = 0}^{\infty} \frac{1}{2^k}\\
+  &= \sum_{k = 0}^{\infty} k \left( \frac{1}{2} \right)^k - \sum_{k = 0}^{\infty} \left( \frac{1}{2} \right)^k\\
+  &= \frac{(1/2)}{(1 - (1/2))^2} - \frac{1}{1 - (1/2)}\\
+  &= \frac{(1/2)}{1 - 1 - (1/4)} - 2\\
+  &= 4/2 - 2\\
+  &= 0.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.1{-}5] {($\star$) Evaluate the sum
+$\sum_{k = 1}^{\infty} (2k + 1) x^{2k}$ for $|x| < 1$.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{\infty} (2k + 1) x^{2k}
+  &= \frac{d}{dx} \cdot \sum_{k = 1}^{\infty} x^{2k + 1}\\
+  &= \frac{d}{dx} \cdot x \cdot \sum_{k = 1}^{\infty} x^{2k}\\
+  &= \frac{d}{dx} \cdot x \cdot \sum_{k = 0}^{\infty} (x^2)^k - x\\
+  &= \frac{d}{dx} \cdot x \cdot \frac{1}{1 - x^2} - x\\
+  &= \frac{d}{dx} \cdot \frac{x - x (1 - x^2)}{1 - x^2}\\
+  &= \frac{d}{dx} \cdot \frac{x^3}{1 - x^2}\\
+  &= \frac{3 x^2 (1 - x^2) - (-2x) x^3}{(1 - x^2)^2}\\
+  &= \frac{3 x^2 - 3 x^4 + 2 x^4}{(1 - x^2)^2}\\
+  &= \frac{(3 - x^2) \cdot x^2}{(1 - x^2)^2}.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.1{-}6] {Prove that
+$\sum_{k=1}^{n} O(f_k(i)) = O(\sum_{k = 1}^{n} f_k(i))$ by using the linearity
+property of summations.}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\newpage
+
+\item[A.1{-}7] {Evaluate the product $\prod_{k = 1}^{n} 2 \cdot 4^k$.}
+
+\begin{framed}
+We have
+\[
+  \prod_{k = 1}^n (2 \cdot 4^k) = 2^{\lg{\left(\prod_{k = 1}^n (2 \cdot 4^k)\right)}},
+\]
+and
+\begin{equation*}
+\begin{aligned}
+  \lg{\left(\prod_{k = 1}^n (2 \cdot 4^k)\right)}
+  &= \sum_{k = 1}^{n} \lg (2 \cdot 2^{2k})\\
+  &= \sum_{k = 1}^{n} \lg 2^{2k + 1}\\
+  &= \sum_{k = 1}^{n} (2k + 1)\\
+  &= 2 \sum_{k = 1}^n k + \sum_{k = 1}^n 1\\
+  &= n (n + 1) + n\\
+  &= n (n + 2).
+\end{aligned}
+\end{equation*}
+
+Thus,
+\[
+  \prod_{k = 1}^n (2 \cdot 4^k) = 2^{n (n + 2)}.
+\]
+\end{framed}
+
+\item[A.1{-}8] {($\star$) Evalute the product $\prod_{k = 2}^{n} (1 - 1/k^2)$.}
+
+\begin{framed}
+We have
+\[
+  \prod_{k = 2}^{n} \left(1 - \frac{1}{k^2}\right) = 2^{\lg{\left( \sum_{k = 2}^{n} \lg{(1 - 1/k^2)} \right)}},
+\]
+and
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 2}^{n} \lg{\left(1 - \frac{1}{k^2}\right)}
+  &= \sum_{k = 2}^{n} \lg{\left( \frac{k^2 - 1}{k^2} \right)}\\
+  &= \sum_{k = 2}^{n} \lg{\left( \frac{(k - 1)}{k} \cdot \frac{(k + 1)}{k} \right)}\\
+  &= \sum_{k = 2}^{n} \left( \lg \left( \frac{k - 1}{k} \right) + \lg \left( \frac{k + 1}{k} \right) \right)\\
+  &= \lg{\frac{1}{2}} + \lg{\frac{3}{2}} +
+     \lg{\frac{2}{3}} + \lg{\frac{4}{3}} +
+     \lg{\frac{3}{4}} + \lg{\frac{5}{4}} +
+     \dots +
+     \lg{\frac{n - 2}{n - 1}} + \lg{\frac{n}{n - 1}} +
+     \lg{\frac{n - 1}{n}} + \lg{\frac{n + 1}{n}}\\
+  &= \lg 1 - \lg 2 + \cancel{\lg 3} - \cancel{\lg 2} + \cancel{\lg 2} - \cancel{\lg 3}
+           + \cancel{\lg 4} - \cancel{\lg 3} + \cancel{\lg 3} - \cancel{\lg 4} + \cancel{\lg 5} - \cancel{\lg 4} + \dots\\
+  & \qquad + \cancel{\lg (n - 2)} - \cancel{\lg (n - 1)} + \cancel{\lg n} - \cancel{\lg (n - 1)}
+           + \cancel{\lg (n - 1)} - \cancel{\lg n} + \lg (n + 1) - \lg n\\
+  &= 0 - 1 + \lg (n + 1) - \lg n\\
+  &= \lg (n + 1) - \lg (n) - 1.
+\end{aligned}
+\end{equation*}
+
+Thus,
+\[
+  \prod_{k = 2}^{n} \left(1 - \frac{1}{k^2}\right) = 2^{(\lg (n + 1) - (\lg (n) + 1))}
+  = \frac{2^{\lg{(n + 1)}}}{2^{\lg{(n) + 1}}}
+  = \frac{n + 1}{2^{\lg n} \cdot 2}
+  = \frac{n + 1}{2n}.
+\]
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section A.2 {--} Bounding summations}
+
+\begin{enumerate}
+
+\item[A.2{-}1] {Show that $\sum_{k = 1}^{n} 1/k^2$ is bounded above by
+a constant.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} &=   1 + \sum_{k = 2}^{n} \frac{1}{k^2}\\
+                   &\le 1 + \int_{1}^{n} \frac{dx}{x^2}\\
+                   &=   1 + \left( \Eval{- \frac{1}{x}}{1}{n} \right)\\
+                   &=   1 + \left( - \frac{1}{n} - \left( - \frac{1}{1} \right) \right)\\
+                   &= 2 - \frac{1}{n}\\
+                   &\le 2.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.2{-}2] {Find an asymptotic upper bound on the summation
+\[
+  \sum_{k = 0}^{\floor{\lg n}} \ceil{n/2^k}.
+\]
+}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 0}^{\floor{\lg n}} \Bigl\lceil \frac{n}{2^k} \Bigr\rceil
+  &=   n \cdot \sum_{k = 0}^{\floor{\lg n}}  \Bigl\lceil \frac{1}{2^k} \Bigr\rceil\\
+  &\le n \cdot \sum_{k = 0}^{\lg n}  \left( \frac{1}{2^k} + 1 \right)\\
+  &=   n \cdot \sum_{k = 0}^{\lg n}  \left( \frac{1}{2^k} \right) + \sum_{k = 0}^{\lg n} 1\\
+  &=   n \cdot \frac{1}{1 - (1/2)} + \lg n + 1\\
+  &=   2n + \lg n + 1\\
+  &=   O(n).
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[A.2{-}3] {Show that the $n$th harmonic number is $\Omega(\lg n)$ by
+splitting the summation.}
+
+\begin{framed}
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^n \frac{1}{k} &\ge \sum_{i = 0}^{\floor{\lg n} - 1} \sum_{j = 0}^{2^i - 1} \frac{1}{2^i + j}\\
+                             &\ge \sum_{i = 0}^{\floor{\lg n} - 1} \sum_{j = 0}^{2^i - 1} \frac{1}{2^{i + 1}}\\
+                             &=   \sum_{i = 0}^{\floor{\lg n} - 1} \frac{1}{2} \cdot \sum_{j = 0}^{2^i - 1} \frac{1}{2^{i}}\\
+                             &=   \sum_{i = 0}^{\floor{\lg n} - 1} \frac{1}{2}\\
+                             &\ge \sum_{i = 0}^{\lg n - 2} \frac{1}{2}\\
+                             &=   \frac{1}{2} (\lg (n) - 1)\\
+                             &=   \Omega(\lg n).
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\newpage
+
+\item[A.2{-}4] {Approximate $\sum_{k = 1}^{n} k^3$ with an integral.}
+
+\begin{framed}
+We have
+\[
+  \int_{0}^{n} x^3 dx \le \sum_{k = 1}^{n} k^3 \le \int_{1}^{n + 1} x^3 dx.
+\]
+
+For a lower bound, we obtain
+\[
+  \sum_{k = 1}^{n} k^3 \ge \int_{0}^{n} x^3 dx = \Eval{\frac{x^4}{4}}{0}{n} = \frac{n^4}{4} = \Omega(n^4).
+\]
+
+For the upper bound, we obtain
+\[
+  \sum_{k = 1}^{n} k^3 \le \int_{1}^{n + 1} x^3 dx = \Eval{\frac{x^4}{4}}{1}{n + 1} = \frac{(n + 1)^4 - 1}{4} = O(n^4).
+\]
+
+Thus,
+\[
+  \sum_{k = 1}^{n} k^3 = \Theta(n^4).
+\]
+
+
+\end{framed}
+
+\item[A.2{-}5] {Why didn't we use the integral approximation (A.12) directly on
+$\sum_{k = 1}^{n} 1/k$ to obtain an upper bound on the $n$th harmonic number?}
+
+\begin{framed}
+Applying (A.12) directly, we obtain
+\[
+  \sum_{k = 1}^{n} \frac{1}{k} \le \int_{0}^{n} \frac{1}{x} dx,
+\]
+but the function $1/x$ is undefined for $x = 0$ (because of the division by
+zero).
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Problems}
+
+\begin{enumerate}
+
+\item[A{-}1]{\textbf{\emph{Bounding summations}}\\
+Give asymptotically tight bounds on the following summations. Assume that
+$r \ge 0$ and $s \ge 0$ are constants.
+\begin{enumerate}
+  \item[a.] $\sum_{k = 1}^{n} k^r$.
+  \item[b.] $\sum_{k = 1}^{n} \lg^s k$.
+  \item[c.] $\sum_{k = 1}^{n} k^r \lg^s k$.
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item[(a)] For a lower bound, we have
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} k^r &\ge \int_{0}^{n} x^r dx\\
+                       &=   \Eval{\frac{x^{(r + 1)}}{r + 1}}{0}{n}\\
+                       &=   \frac{n^{(r + 1)}}{r + 1} - \frac{0^{(r + 1)}}{r + 1}\\
+                       &\ge n^{(r + 1)}\\
+                       &=   \Omega(n^{(r + 1)}),
+\end{aligned}
+\end{equation*}
+and for the upper bound, we have
+\[
+  \sum_{k = 1}^{n} k^r \le \sum_{k = 1}^{n} n^r = n^{(r + 1)} = O(n^{(r + 1)}).
+\]
+
+Thus,
+\[
+  \sum_{k = 1}^{n} = \Theta(n^{(r + 1)}).
+\]
+
+\item[(b)] For a lower bound, we have
+\begin{equation*}
+\begin{aligned}
+  \sum_{k = 1}^{n} \lg^{s} k &=   \sum_{k = 1}^{n/2} \lg^{s} k + \sum_{k = n/2 + 1}^{n} \lg^{s} k\\
+                             &\ge \sum_{k = 1}^{n/2} 0 + \sum_{k = n/2 + 1}^{n} \lg^{s}{\left(\frac{n}{2}\right)}\\
+                             &=   \frac{n}{2} \lg^{s}{\left(\frac{n}{2}\right)}\\
+                             &=   \frac{n}{2} \lg^{s}{n} - \frac{n}{2} \lg^{s}{2}\\
+                             &\ge \frac{1}{2} n \lg^{s} n - \frac{1}{2} n\\
+                             &=   \Omega(n \lg^s n),
+\end{aligned}
+\end{equation*}
+and for the upper bound, we have
+\[
+  \sum_{k = 1}^{n} \lg^{s} k \le \sum_{k = 1}^{n} \lg^{s} n = n \lg^s n = O(n \lg^s n).
+\]
+Thus,
+\[
+  \sum_{k = 1}^{n} \lg^{s} k = \Theta(n \lg^s n).
+\]
+
+\item[(c)] It is easy to see that this summation is greater than the one from
+item (a). Thus, it is $\Omega(n^{(r + 1)})$. Also, we have
+\[
+  \sum_{k = 1}^{n} k^r \lg^{s} k \le \sum_{k = 1}^{n} n^r \lg^{s} n = O(n^{(r + 1)} \lg^s n).
+\]
+
+Thus, I guess it is $\Theta(n^{(r + 1)} \lg^s n)$.
+
+\end{enumerate}
+\end{framed}
+
+\end{enumerate}
+
+\end{document}
