@@ -338,14 +338,18 @@ the path from which the problem size is always divided by $1/\alpha$. This depth
 is the number of divisions of $n$ by
 $(1/\alpha)$ until reaching a value less than of equal to one, which is
 \[
-  \log_{1/\alpha} n = \frac{\lg n}{\lg (1/\alpha)} = \frac{\lg n}{- \lg \alpha} = - \frac{\lg n}{\lg \alpha}.
+  \log_{1/\alpha} n = \frac{\lg n}{\lg (1/\alpha)}
+                    = \frac{\lg n}{- \lg \alpha}
+                    = - \frac{\lg n}{\lg \alpha}.
 \]
 
 The maximum depth occurs on the path from which the problem size is always
 divided by $1/(1 - \alpha)$. This depth is the number of divisions of $n$ by
 $1/(1 - \alpha)$ until reaching a value less than or equal to one, which is
 \[
-  \log_{1/(1 - \alpha)} n = \frac{\lg n}{\lg (1/(1 - \alpha))} = \frac{\lg n}{- \lg (1 - \alpha)} = - \frac{\lg n}{\lg (1 - \alpha)}.
+  \log_{1/(1 - \alpha)} n
+  = \frac{\lg n}{\lg (1/(1 - \alpha))}
+  = \frac{\lg n}{- \lg (1 - \alpha)} = - \frac{\lg n}{\lg (1 - \alpha)}.
 \]
 
 \end{framed}
@@ -374,6 +378,35 @@ Thus, the probability of getting a more balanced split is
   &= 1 - 2 \alpha.
 \end{aligned}
 \end{equation*}
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 7.3 {--} A randomized version of quicksort}
+
+\begin{enumerate}
+
+\item[7.3{-}1]{Why do we analyze the expected running time of a randomized
+algorithm and not its worst-case running time?}
+
+\begin{framed}
+We can analyze the worst-case. However, due to the randomization, it is not very
+useful since we can not associate a specific input to a specific running time.
+On the other hand, we can calculate the expected running time, which takes into
+account all the possible inputs.
+\end{framed}
+
+\item[7.3{-}2]{When \textsc{Randomized-Quicksort} runs, how many calls are made
+to the random-number generator \textsc{Random} in the worst case? How about in the
+best case? Give your answer in terms of $\Theta$-notation.}
+
+\begin{framed}
+Every element is selected as a pivot exactly one time and the number of calls
+to \textsc{Random} will always be $n$. Thus, both the best-case and the
+worst-case takes $\Theta(n)$, where $n$ denotes the number of calls to
+\textsc{Random}.
 \end{framed}
 
 \end{enumerate}
