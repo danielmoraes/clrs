@@ -21,9 +21,9 @@
 \usepackage{courier}
 \usepackage{mathtools} % loads amsmath
 \usepackage{forest}
-
 \usepackage{tikz}
 \usepackage{tikz-qtree}
+\usepackage{interval}
 \usetikzlibrary{calc}
 
 %                         MARGINS                           %
@@ -90,6 +90,11 @@
          edge from parent/.style=
          {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
          level distance=1cm}
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\intervalconfig{soft open fences}
 
 %                        DOCUMENT                           %
 % --------------------------------------------------------- %
@@ -248,6 +253,127 @@ to
 \[
   A[j] \ge x.
 \]
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 7.2 {--} Performance of quicksort}
+
+\begin{enumerate}
+
+\item[7.2{-}1]{Use the substitution method to prove the recurrence
+$T(n) = T(n - 1) + \Theta(n)$ has the solution $T(n) = \Theta(n^2)$, as claimed
+at the beginning of Section 7.2.}
+
+\begin{framed}
+Our guess is
+\[
+  T(n) \le cn^2 - dn\;\Forall n \ge n_0,
+\]
+where $c$, $d$, and $n_0$ are positive constants. Substituting into the
+recurrence, yields
+\begin{equation*}
+\begin{aligned}
+  T(n) &\le c(n - 1)^2 - d(n - 1) + en\\
+       &= cn^2 - 2cn + c -d(n - 1) + en & \text{($c = 1, d = 2e$)}\\
+       &\le cn^2,\\
+\end{aligned}
+\end{equation*}
+where the last step holds as long as $n_0 \ge 2$.
+\end{framed}
+
+\item[7.2{-}2]{What is the running time of \textsc{Quicksort} when all elements
+of array $A$ have the same value?}
+
+\begin{framed}
+As discussed in (7.1-2), when all elements are the same, $q$ will always be
+equal to $r$, which gives the worst-case split. Thus, \textsc{Quicksort} as
+implemented in Section 7.1, will run in $\Theta(n^2)$ in this case.
+\end{framed}
+
+\item[7.2{-}3]{Show that the running time of \textsc{Quicksort} is $\Theta(n^2)$
+when the array $A$ contains distinct elements and is sorted in decreasing
+order.}
+
+\begin{framed}
+The pivot index $q$ will always be $1$, which gives a $0$ to $n - 1$ split.
+The recurrence will be $T(n) = T(n - 1) + \Theta(n) = \Theta(n^2)$.
+\end{framed}
+
+\item[7.2{-}4]{Banks often record transactions on an account in order of the
+times of the transactions, but many people like to receive their bank statements
+with checks listed in order by check number. People usually write checks in
+order by check number, and merchants usually cash them with reasonable dispatch.
+The problem of converting time-of-transaction ordering to check-number ordering
+is therefore the problem of sorting almost-sorted input. Argue that the
+procedure \textsc{Insertion-Sort} would tend to beat the procedure
+\textsc{Quicksort} on this problem.}
+
+\begin{framed}
+Lets assume that each item is out of order by no more than $k$ positions. Note
+that in the above scenario, $k$ usually can be bounded by a constant. In this
+case, \textsc{Insertion-Sort} runs in $O(kn)$ (it will make at most $k$ swaps
+for each item of the array), which is close to linear for small $k$. On the
+other hand, \emph{most} splits given by the \textsc{Partition} procedure will
+be no better than a $k - 1$ to $n - k$ split. Assuming that it always give an
+$k - 1$ to $n - k$ split, the recurrence of \textsc{Quicksort} will be
+$T(n) = T(k) + T(n - k) + \Theta(n)$, which is close to quadratic for small $k$.
+\end{framed}
+
+\item[7.2{-}5]{Suppose that the splits at every level of quicksort are in the
+proportion $1 - \alpha$ to $\alpha$, where $0 < \alpha \le 1/2$ is a constant.
+Show that the minimum depth of a leaf in the recursion tree is approximately
+$- \lg n / \lg \alpha$ and the maximum depth is approximately
+$- \lg n / \lg (1 - \alpha)$. (Don't worry about integer round-off.)}
+
+\begin{framed}
+Note that
+\[
+  \alpha \le \frac{1}{2} \le 1 - \alpha,
+\]
+which implies $\alpha n \le (1 - \alpha) n$. Thus, the minimum depth occurs on
+the path from which the problem size is always divided by $1/\alpha$. This depth
+is the number of divisions of $n$ by
+$(1/\alpha)$ until reaching a value less than of equal to one, which is
+\[
+  \log_{1/\alpha} n = \frac{\lg n}{\lg (1/\alpha)} = \frac{\lg n}{- \lg \alpha} = - \frac{\lg n}{\lg \alpha}.
+\]
+
+The maximum depth occurs on the path from which the problem size is always
+divided by $1/(1 - \alpha)$. This depth is the number of divisions of $n$ by
+$1/(1 - \alpha)$ until reaching a value less than or equal to one, which is
+\[
+  \log_{1/(1 - \alpha)} n = \frac{\lg n}{\lg (1/(1 - \alpha))} = \frac{\lg n}{- \lg (1 - \alpha)} = - \frac{\lg n}{\lg (1 - \alpha)}.
+\]
+
+\end{framed}
+
+\newpage
+
+\item[7.2{-}6]{($\star$) Argue that for any constant $0 < \alpha \le 1/2$, the
+probability is approximately $1 - 2\alpha$ that on a random input array,
+\textsc{Partition} produces a split more balanced than $1 - \alpha$ to $\alpha$.}
+
+\begin{framed}
+Note that $\alpha$ denotes the proportion of the smallest split. Since the input
+array is random, the possible proportions for the smallest split forms a uniform
+probability distribution, such that
+\[
+  \text{Pr}\left\{\left[0, \frac{1}{2}\right]\right\} = 1.
+\]
+
+Thus, the probability of getting a more balanced split is
+\begin{equation*}
+\begin{aligned}
+  \text{Pr}\left\{\interval[open left, scaled]{\alpha}{\frac{1}{2}}\right\}
+  &= \text{Pr}\left\{\interval[scaled]{\alpha}{\frac{1}{2}}\right\}\\
+  &= \frac{1/2 - \alpha}{1/2 - 0}\\
+  &= \frac{1/2}{1/2} - \frac{\alpha}{1/2}\\
+  &= 1 - 2 \alpha.
+\end{aligned}
+\end{equation*}
 \end{framed}
 
 \end{enumerate}
