@@ -185,7 +185,7 @@ $A = \langle 13, 19, 9, 5, 12, 8, 7, 4, 21, 2, 6, 11 \rangle$.}
 %
   \colorbox{l}{\makebox[1em]{9}}  \colorbox{l}{\makebox[1em]{5}}  \colorbox{l}{\makebox[1em]{8}}
   \colorbox{l}{\makebox[1em]{7}}  \colorbox{l}{\makebox[1em]{4}}  \colorbox{l}{\makebox[1em]{2}}
-  \colorbox{l}{\makebox[1em]{6}} \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{21}}
+  \colorbox{l}{\makebox[1em]{6}}  \colorbox{d}{\makebox[1em]{12}} \colorbox{d}{\makebox[1em]{21}}
   \colorbox{d}{\makebox[1em]{13}} \colorbox{d}{\makebox[1em]{19}}
   \colorbox{w}{\makebox[1em]{\textcolor{red}{11}}}\\
 %
@@ -407,6 +407,221 @@ Every element is selected as a pivot exactly one time and the number of calls
 to \textsc{Random} will always be $n$. Thus, both the best-case and the
 worst-case takes $\Theta(n)$, where $n$ denotes the number of calls to
 \textsc{Random}.
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 7.4 {--} Analysis of quicksort}
+
+\begin{enumerate}
+
+\item[7.4{-}1]{Show that in the recurrence
+\[
+  T(n) = \max_{0 \le q \le n - 1}(T(q) + T(n - q - 1)) + \Theta(n),
+\]
+\[
+  T(n) = \Omega(n^2).
+\]}
+
+\begin{framed}
+We guess that $T(n) \ge cn^2$ for some constant $c$. Substituting into the
+recurrence, yields
+\begin{equation*}
+\begin{aligned}
+  T(n) &\ge \max_{0 \le q \le n - 1}(cq^2 + c(n - q - 1)^2) + \Theta(n)\\
+       &=   c \cdot \max_{0 \le q \le n - 1}(q^2 + (n - q - 1)^2) + \Theta(n).
+\end{aligned}
+\end{equation*}
+
+The expression $q^2 + (n - q - 1)^2$ achieves a maximum at $q = 0$ (proof on
+(7.4-3)). Thus, we have
+\[
+  \max_{0 \le q \le n - 1}(q^2 + (n - q - 1)^2) = (n - 1)^2,
+\]
+which give us the bound
+\begin{equation*}
+\begin{aligned}
+  T(n) &\ge c (n - 1)^2 + \Theta(n)\\
+       &=   cn^2 - 2cn + c + \Theta(n)\\
+       &=   cn^2 - c(2n - 1) + \Theta(n)\\
+       &\ge cn^2,
+\end{aligned}
+\end{equation*}
+since we pick the constant $c$ small enough so that the $\Theta(n)$ term
+dominates the $c(2n - 1)$ term, which implies
+\[
+  T(n) = \Omega(n^2).
+\]
+\end{framed}
+
+\item[7.4{-}2]{Show that quicksort's best-case running time is $\Omega(n \lg n)$.}
+
+\begin{framed}
+Let $T(n)$ be the best-case time of \textsc{Quicksort} on an input of size
+$n$. We have the recurrence
+\[
+  T(n) = \min_{0 \le q \le n - 1}(T(q) + T(n - q - 1)) + \Theta(n).
+\]
+
+We guess $T(n) \ge cn \lg n$ for some constant $c$. Substituting into the
+recurrence yields
+\begin{equation*}
+\begin{aligned}
+  T(n) &\ge \min_{0 \le q \le n - 1}(cq \lg q + c(n - q - 1) \lg (n - q - 1)) + \Theta(n)\\
+       &=   c \cdot \min_{0 \le q \le n - 1}(q \lg q + (n - q - 1) \lg (n - q - 1)) + \Theta(n).
+\end{aligned}
+\end{equation*}
+
+For simplicify, assume that $n$ is odd. The expression $c q \lg q + (n - q - 1)
+\lg (n - q - 1)$ achieves a minimum when
+\[
+  q = n - q - 1,
+\]
+which implies
+\[
+  q = \frac{n - 1}{2}.
+\]
+Thus, we have
+\begin{equation*}
+\begin{aligned}
+  T(n) &\ge c \left(\frac{n - 1}{2}\right) \lg \left(\frac{n - 1}{2}\right) +
+            c\left(n - \frac{n - 1}{2} - 1\right) \lg \left(n - \frac{n - 1}{2} - 1\right) + \Theta(n)\\
+       &= c(n - 1) \lg \left(\frac{n - 1}{2}\right) + \Theta(n)\\
+       &= c(n - 1) \lg (n - 1) - c(n - 1) + \Theta(n)\\
+       &= cn \lg (n - 1) - c \lg (n - 1) - c (n - 1) + \Theta(n)\\
+       &\ge cn \lg \left(\frac{n}{2}\right) - c \lg (n - 1) - c(n - 1) + \Theta(n) & \text{($n \ge 2$)}\\
+       &= cn \lg n - cn - c \lg (n - 1) - c(n - 1) + \Theta(n)\\
+       &= cn \lg n - c (2n + \lg (n - 1) - 1) + \Theta(n)\\
+       &\ge cn \lg n,
+\end{aligned}
+\end{equation*}
+since we pick the constant $c$ small enough so that the $\Theta(n)$ term
+dominates the $c(2n + \lg (n - 1) - 1)$ term, which implies
+\[
+  T(n) = \Omega(n \lg n).
+\]
+\end{framed}
+
+\item[7.4{-}3]{Show that the expression $q^2 + (n - q - 1)^2$ achieves a maximum
+over $q = 0, 1, \dots, n - 1$ when $q = 0$ or $q = n - 1$.}
+
+\begin{framed}
+Let $f(q) = q^2 + (n - q - 1)^2$. We have
+\[
+  f'(q) = 2q + 2(n - q - 1) \cdot (-1) = 4q -2n + 2,
+\]
+and
+\[
+  f''(q) = 4.
+\]
+
+Since the second derivative is positive, $f(q)$ achieves a maximum over $0, 1,
+\dots, n - 1$ at either endpoint. But we have
+\[
+  f(0) = 0^2 + (n - 1)^2 = (n - 1)^2 + (n - (n - 1) - 1)^2 = f(n - 1),
+\]
+which implies that both endpoints are maximum.
+\end{framed}
+
+\item[7.4{-}4]{Show that \textsc{Randomized-Quicksort's} expected running time
+is $\Omega(n \lg n)$.}
+
+\begin{framed}
+Combining equations $(7.2)$ and $(7.3)$, we get
+\begin{equation*}
+\begin{aligned}
+  \text{E}[X] &=   \sum_{i = 1}^{n - 1} \sum_{j = i + 1}^{n} \frac{2}{j - i + 1}\\
+              &=   \sum_{i = 1}^{\floor{n/2}} \sum_{k = 1}^{n - i} \frac{2}{k + 1} +
+                   \sum_{i = \floor{n/2} + 1}^{n - 1} \sum_{k = 1}^{n - i} \frac{2}{k + 1}\\
+              &\ge \sum_{i = 1}^{\floor{n/2}} \sum_{k = 1}^{n - i} \frac{2}{k + 1}\\
+              &\ge \sum_{i = 1}^{\floor{n/2}} \sum_{k = 1}^{n/2} \frac{2}{k + 1}\\
+              &\ge \sum_{i = 1}^{\floor{n/2}} \sum_{k = 1}^{n/2} \frac{1}{k} & \text{(since $k \ge 1$)}\\
+              &= \Bigl\lfloor \frac{n}{2} \Bigr\rfloor \cdot \left(\lg \left( \frac{n}{2} \right) + O(1) \right) & \text{(approx. of harmonic number)}\\
+              &= \Omega(n \lg n).
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[7.4{-}5]{We can improve the running time of quicksort in practice by
+taking advantage of the fast running time of insertion sort when its input is
+``nearly'' sorted. Upon calling quicksort on a subarray with fewer than
+$k$ elements, let it simply return without sorting the subarray. After the
+top-level call to quicksort returns, run insertion sort on the entire array
+to finish the sorting process. Argue that this sorting algorithm runs in
+$O(nk + n \lg(n/k))$ expected time. How should we pick $k$, both in theory and
+in practice?}
+
+\begin{framed}
+Lets first analyze the modified \textsc{Quicksort}. As in the standard
+\textsc{Quicksort}, it is easy to see that the worst-case of this modified
+version is still $O(n^2)$. As for the expected time, we can use a similar
+argument to the one used on Section 7.2, in which we saw that any split of
+constant proportionality on \textsc{Quicksort} yields a recursion tree of
+depth $\Theta(\lg n)$. Assume that \textsc{Partition} on this modified
+\textsc{Quicksort} always give a 99-to-1 split. The height $h$ of the recursion
+tree would be
+\[
+  \frac{n}{(100/99)^h} = k \rightarrow h = \log_{100/99} \frac{n}{k} \rightarrow h = \Theta\left(\lg \frac{n}{k}\right).
+\]
+Since each recursion level has cost at most $cn$, the expected total cost of
+this modified \textsc{Quicksort} is $O(n \lg \frac{n}{k})$.
+
+As for the cost of the \textsc{Insertion-Sort}, note that the modified
+\textsc{Quicksort} will give an array that is composed by sorted subarrays. The
+number of sorted subarrays is at most $n/k$. Thus, \textsc{Insertion-Sort} will
+take at most $n/k \cdot O(k^2) = O(nk)$. Finally, the cost of the whole
+algorithm is $O(nk) + O(n \lg (n/k)) = O(nk + n \lg (n/k))$.
+
+\end{framed}
+
+\newpage
+
+\item[7.4{-}6]{($\star$) Consider modifying the \textsc{Partition} procedure by
+randomly picking three elements from array $A$ and partitioning about their
+median (the middle value of the three elements). Approximate the probability of
+getting at worst an $\alpha$-to-$(1 - \alpha)$ split, as a function of
+$\alpha$ in the range $0 < \alpha < 1$.}
+
+\begin{framed}
+First assume $0 < \alpha \le 1/2$. There four ways to get a split worse than
+$\alpha$-to-$(1 - \alpha)$:
+\begin{enumerate}
+  \item The index of exactly two elements are smaller than $\alpha n$
+  \item The index of exactly two elements are greater than $n - \alpha n$.
+  \item The index of all three elements are smaller than $\alpha n$.
+  \item The index of all three elements are greater than $n - \alpha n$.
+\end{enumerate}
+Since we want an approximation, assume that we can repeat the same element. The
+probability of cases (a) and (b) is
+\[
+  \text{Pr}\{(a)\} = \text{Pr}\{(b)\} =
+  3 \cdot \left(\frac{\alpha n}{n} \cdot \frac{\alpha n}{n} \cdot
+                \frac{(1 - \alpha) n}{n}\right) =
+  3 \alpha^2 - 3 \alpha^3,
+\]
+in which the multiplication on the left is needed since there are
+$\binom{3}{1} = 3$ ways to pick one of three elements outside the desired range.
+The probability of cases (c) and (d) is
+\[
+  \text{Pr}\{(c)\} = \text{Pr}\{(d)\} =
+  \frac{\alpha n}{n} \cdot \frac{\alpha n}{n} \cdot \frac{\alpha n}{n} =
+  \alpha^3.
+\]
+
+Thus, the probability of getting a split worse than $\alpha$-to-$(1 - \alpha)$ is
+\begin{equation*}
+\begin{aligned}
+  1 - \text{Pr}\{(a) + (b) + (c) + (d)\}
+  &= 1 - \left(\text{Pr}\{(a)\} + \text{Pr}\{(b)\} + \text{Pr}\{(c)\} + \text{Pr}\{(d)\}\right)\\
+  &= 1 - \left((3 \alpha^2 - 3 \alpha^3) + (3 \alpha^2 - 3 \alpha^3) + \alpha^3 + \alpha^3\right)\\
+  &= 1 - (6 \alpha^2 - 4 \alpha^3)\\
+  &= 1 - 6 \alpha^2 + 4 \alpha^3.
+\end{aligned}
+\end{equation*}
+
+The proof is similar for $1/2 \le \alpha < 1$ and the result is the same.
 \end{framed}
 
 \end{enumerate}
