@@ -403,10 +403,20 @@ to the random-number generator \textsc{Random} in the worst case? How about in t
 best case? Give your answer in terms of $\Theta$-notation.}
 
 \begin{framed}
-Every element is selected as a pivot exactly one time and the number of calls
-to \textsc{Random} will always be $n$. Thus, both the best-case and the
-worst-case takes $\Theta(n)$, where $n$ denotes the number of calls to
-\textsc{Random}.
+First note that counting the number of calls to \textsc{Random} is the same as
+counting number of calls to \textsc{Partition}.
+
+The worst-case occurs when \textsc{Partition} always gives an $(n - 1)$-to-0
+split. Note that after the first $n - 1$ pivots are selected, the remaining
+subarray will contain a single element. Since \textsc{Partition} is only called
+on subarrays of size greater than one, in the worst-case the number of calls to
+\textsc{Partition} is $n - 1 = \Theta(n)$.
+
+As for the best case, consider the array $A = [1, 2, 3]$. If the element $2$ is
+the first to be selected as a pivot, the subarrays $[1]$ and $[3]$ will not be
+passed to \textsc{Partition} (both of them has size one) and the number of calls
+to \textsc{Partition} in this case is 1. In general, in the best-case the number
+of calls to \textsc{Partition} is $\floor{n/2} = \Theta(n)$.
 \end{framed}
 
 \end{enumerate}
@@ -566,14 +576,12 @@ tree would be
   \frac{n}{(100/99)^h} = k \rightarrow h = \log_{100/99} \frac{n}{k} \rightarrow h = \Theta\left(\lg \frac{n}{k}\right).
 \]
 Since each recursion level has cost at most $cn$, the expected total cost of
-this modified \textsc{Quicksort} is $O(n \lg \frac{n}{k})$.
-
-As for the cost of the \textsc{Insertion-Sort}, note that the modified
-\textsc{Quicksort} will give an array that is composed by sorted subarrays. The
-number of sorted subarrays is at most $n/k$. Thus, \textsc{Insertion-Sort} will
-take at most $n/k \cdot O(k^2) = O(nk)$. Finally, the cost of the whole
+this modified \textsc{Quicksort} is $O(n \lg \frac{n}{k})$. As for the cost of
+the \textsc{Insertion-Sort}, note after running the modified \textsc{Quicksort},
+every element will be out of order by at most $k$ positions. Thus, each
+iteration of the outer loop of \textsc{Insertion-Sort} will make at most $k$
+swaps, which gives a running time of $O(nk)$. Finally, the cost of the whole
 algorithm is $O(nk) + O(n \lg (n/k)) = O(nk + n \lg (n/k))$.
-
 \end{framed}
 
 \newpage
