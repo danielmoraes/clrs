@@ -1292,12 +1292,12 @@ The pseudocode is stated below.
     \If{$A[k].a \le b$}{%
       $j = j + 1$\;
       exchange $A[j]$ with $A[k]$\;
-      // $A[k]$ does not overlap the pivot\;
+      // intervals ($A[k]$ and pivot) do not overlap\;
       \If{$A[j].b < a$}{%
         $i = i + 1$\;
         exchange $A[i]$ with $A[j]$\;
       }
-      // $A[k]$ has overlap the pivot\;
+      // intervals ($A[k]$ and pivot) overlap\;
       \Else{%
         \If{$A[k].a > a$}{%
           $a = A[k].a$\;
@@ -1342,7 +1342,7 @@ The pseudocode is stated below.
 \newpage
 
 \item{When all intervals share a common point, the array is already sorted. In
-this case, there will be only one call to \textsc{FuzzyPartition}, which will
+this case, there will be only one call to \textsc{Fuzzy-Partition}, which will
 return $q = p$ and $t = r$. Thus, the algorithm will run in $\Theta(n)$.
 
 The general case is a little tricky to proof.}
