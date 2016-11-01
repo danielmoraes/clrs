@@ -17,7 +17,7 @@
 \usepackage{framed}
 \usepackage{xcolor}
 \usepackage{algpseudocode}
-\usepackage{algorithm2e} % for psuedo code
+\usepackage[linesnumbered]{algorithm2e} % for psuedo code
 \usepackage{courier}
 \usepackage{mathtools} % loads amsmath
 \usepackage{forest}
@@ -95,6 +95,9 @@
 \newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
 
 \intervalconfig{soft open fences}
+
+\let\oldnl\nl% Store \nl in \oldnl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
 
 %                        DOCUMENT                           %
 % --------------------------------------------------------- %
@@ -218,18 +221,22 @@ The updated pseucode is stated below.
 \BlankLine
 \SetKwFunction{algo}{Partition-Improved}
 \SetKwProg{myalg}{}{}{}
-\myalg{\algo{A, p, r}}{%
-\nl $x = A[r]$\;
-\nl $i = p - 1$\;
-\nl $c = 0$\;
-\nl \For{$j = p$ \KwTo $r - 1$}{%
-\nl   \If{$A[j] \le x$}{%
-\nl     \If{$A[j] == x$}{%
-\nl       $c = c + 1$\; }
-\nl     $i = i + 1$\;
-\nl     \upshape{exchange} $A[i]$ \upshape{with} $A[j]$\; } }
-\nl \upshape{exchange} $A[i + 1]$ \upshape{with} $A[r]$\;
-\nl \Return{$(i + 1) - \floor{c/2}$}\; }
+\nonl\myalg{\algo{A, p, r}}{%
+ $x = A[r]$\;
+ $i = j = p - 1$\;
+ \For{$k = p$ \KwTo $r - 1$}{%
+   \If{$A[k] \le x$}{%
+     $j = j + 1$\;
+     exchange $A[j]$ with $A[k]$\;
+     \If{$A[j] < x$}{%
+       $i = i + 1$\;
+       exchange $A[i]$ with $A[j]$\;
+     }
+   }
+ }
+ exchange $A[j + 1]$ with $A[r]$\;
+ $q = \Bigl\lfloor\frac{(i + 1) + (j + 1)}{2}\Bigr\rfloor$\;
+\Return{$q$}\; }
 \end{algorithm}
 \end{framed}
 
@@ -581,7 +588,10 @@ the \textsc{Insertion-Sort}, note after running the modified \textsc{Quicksort},
 every element will be out of order by at most $k$ positions. Thus, each
 iteration of the outer loop of \textsc{Insertion-Sort} will make at most $k$
 swaps, which gives a running time of $O(nk)$. Finally, the cost of the whole
-algorithm is $O(nk) + O(n \lg (n/k)) = O(nk + n \lg (n/k))$.
+algorithm is
+\[
+  O(nk) + O\left(n \lg \left(\frac{n}{k}\right)\right) = O\left(nk + n \lg \left(\frac{n}{k}\right)\right).
+\]
 \end{framed}
 
 \newpage
@@ -630,6 +640,713 @@ Thus, the probability of getting a split worse than $\alpha$-to-$(1 - \alpha)$ i
 \end{equation*}
 
 The proof is similar for $1/2 \le \alpha < 1$ and the result is the same.
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Problems}
+
+\begin{enumerate}
+
+\item[7{-}1]{\textbf{\emph{Hoare partition correctness}}\\
+The version of \textsc{Partition} given in this chapter is not the original
+partitioning algorithm. Here is the original partition algorithm, which is
+due to C.A.R. Hoare:
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Hoare-Partition}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+ $x = A[p]$\;
+ $i = p - 1$\;
+ $j = r + 1$\;
+\While{\texttt{\upshape{True}}}{%
+   \Repeat{$A[j] \le x$}{%
+     $j = j - 1$\; }
+   \Repeat{$A[i] \ge x$}{%
+     $i = i + 1$\; }
+   \If{$i < j$}{%
+     exchange $A[i]$ with $A[j]$\; }
+   \Else{%
+     \Return{$j$}\; } } }
+\end{algorithm}
+
+\begin{enumerate}
+\item[\textbf{a.}]{Demonstrate the operation of \textsc{Hoare-Partition} on the array
+$A = \langle 13, 19, 9, 5, 12, 8, 7, 4, 11, 2, 6, 21 \rangle$, showing the
+values of the array and auxiliary values after each iteration of the
+\textbf{while} loop in lines 4{--}13.}
+\end{enumerate}
+
+The next three questions ask you to give a careful argument that the procedure
+\textsc{Hoare-Partition} is correct. Assuming that the subarray $A[p, \dots, r]$
+contains at least two elements, prove the following:
+
+\begin{enumerate}
+\item[\textbf{b.}]{The indices $i$ and $j$ are such that we never access an
+element of $A$ outside the subarray $A[p, \dots, r]$.}
+\item[\textbf{c.}]{When \textsc{Hoare-Partition} terminates, it returns a value
+$j$ such that $p \le j < r$.}
+\item[\textbf{d.}]{Every element of $A[p, \dots, j]$ is less than or equal to
+every element of $A[j + 1, \dots, r]$ when \textsc{Hoare-Partition} terminates.}
+\end{enumerate}
+
+The \textsc{Partition} procedure in Section 7.1 separates the pivot value
+(originally in $A[r]$) from the two partitions it forms. The
+\textsc{Hoare-Partition} procedure, on the other hand, always places the pivot
+value (originally in $A[p]$) into one of the two partitions $A[p, \dots, j]$
+and $A[j + 1, \dots, r]$. Since $p \le j < r$, this split is always nontrivial.
+
+\begin{enumerate}
+\item[\textbf{e.}]{Rewrite the \textsc{Quicksort} procedure to use
+\textsc{Hoare-Partition}.}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{The operation is illustrated below:
+
+\begin{center}
+\begin{tabular}{cccccccccccccc}
+  $i$ & $x$                 &                     &   &   &    &   &   &   &     &                    &                    &    & $j$\\
+      & 13                  & 19                  & 9 & 5 & 12 & 8 & 7 & 4 & 11  & 2                  & 6                  & 21 &    \\
+      & $x, i$              &                     &   &   &    &   &   &   &     &                    & $j$                &    &    \\
+      & \textcolor{red}{13} & 19                  & 9 & 5 & 12 & 8 & 7 & 4 & 11  & 2                  & \textcolor{red}{6} & 21 &    \\
+      &                     & $i$                 &   &   &    &   &   &   &     & $j$                & $x$                &    &    \\
+      & 6                   & \textcolor{red}{19} & 9 & 5 & 12 & 8 & 7 & 4 & 11  & \textcolor{red}{2} & 13                 & 21 &    \\
+      &                     &                     &   &   &    &   &   &   & $j$ & $i$                & $x$                &    &    \\
+      & 6                   & 2                   & 9 & 5 & 12 & 8 & 7 & 4 & 11  & 19                 & 13                 & 21 &
+\end{tabular}
+\end{center}
+}
+\item{Consider the following \textbf{\emph{loop invariant}}:
+\begin{quote}
+At the beginning of each iteration of the \textbf{while} loop of lines 4{-}13,
+$i < j$ and the subarray $A[p, \dots, j - 1]$ contains at least one element that
+is lower than or equal to $A[x]$. Similarly, the subarray $A[i + 1, \dots, r]$
+contains at least one element that is greater than or equal to $A[x]$.
+\end{quote}
+We need to show that this loop invariant is true prior to the first iteration,
+that each iteration of the loop maintains the invariant, and that the invariant
+provides a useful property to show correctness when the loop terminates.
+\begin{itemize}
+  \item \textbf{Initialization.} Prior to the \textbf{while} loop of lines 4-13,
+    $i = p - 1$ and $j = r - 1$. Since
+    $A[i + 1, \dots, r] = A[p, \dots, j - 1] = A[p, \dots, r]$, the
+    element $A[x]$ is present in both subarrays. Thus, the loop invariant is
+    valid before the loop.
+  \item \textbf{Maintenance.} From the loop invariant, the \textbf{for} loops of
+    lines 5-7 and 8-10 will both stop on valid indices $i$ and $j$. The loop
+    only goes to the next iteration if $i < j$. In that case, the elements
+    $A[i]$ and $A[j]$ are exchanged, which ensures the loop invariant for the
+    next iteration.
+  \item \textbf{Termination.} At termination, the \textbf{for} loops of lines
+    5-7 and 8-10 will stop on valid indices $i$ and $j$ such that $i \ge j$ and
+    the loop terminates before going to the next iteration.
+\end{itemize}
+
+The above loop invariant ensures that the \text{for} loops of lines 5-7 and
+8-10 will never make $j < p$ or $i > r$, which implies that the
+\textsc{Hoare-Partition} procedure always access elements within the subarray
+$A[p, \dots, r]$.
+}
+\item{From item (b), we have the lower bound $j \ge p$. As for the upper bound
+of $j$, note that:
+\begin{enumerate}
+  \item If $A[r] > x$, the condition on line 7 will be false at least one time,
+    which implies that line 6 will be executed at least twice. Since the initial
+    value of $j$ is $r + 1$, in this case we have $j < r$.
+  \item If $A[r] \le x$, $A[r]$ will be exchanged with $A[p]$ in the first
+    iteration of the \textbf{while} loop and line 6 will be executed for the
+    second time in the next iteration. Thus, in this case we also have $j < r$.
+\end{enumerate}
+These observations give us the bound $p \le j < r$.
+}
+\item{Consider the following \textbf{\emph{loop invariant}}:
+\begin{quote}
+At the beginning of each iteration of the \textbf{while} loop of lines 4-13,
+every element of the subarray $A[p, \dots, \min(i, j)]$ is less than or equal
+to every element of the subarray $A[j + 1, \dots, r]$.
+\end{quote}
+We need to show that this loop invariant is true prior to the first iteration,
+that each iteration of the loop maintains the invariant, and that the invariant
+provides a useful property to show correctness when the loop terminates.
+\begin{itemize}
+\item \textbf{Initialization.} Prior to the \textbf{while} loop, $i = p - 1$,
+$j = r + 1$. Since the subarrays $A[p, \dots, i]$ and $A[j, \dots, r]$ are
+empty, the loop invariant is trivially satisfied.
+\item \textbf{Maintenance.} To see that each iteration maintains the loop
+invariant, note that the \textbf{for} loops of lines 5-7 and 8-10 will decrease
+$j$ and increase $i$ until find an $A[j] \le x$ and an $A[i] \ge x$,
+respectivelly. At this point, the loop invariant (of previous iteration)
+along with the conditions of lines 7 and 10 ensures that every element of
+$A[p, \dots, i - 1]$ is less than or equal to every element of
+$A[j + 1, \dots, r]$. The only possible exceptions to the loop invariant in this
+iteration are the elements $A[i]$ and $A[j]$. Since $A[i] \ge x$ and
+$A[j] \le x$, we have $A[i] \ge A[j]$. To go to the next iteration line 11
+must be valid and the exchange of $A[i]$ with $A[j]$ at line 12 maintains the
+loop invariant.
+\item \textbf{Termination.} At termination, the \textbf{for} loop of lines 5-7
+and 8-10 will stop on indices $i$ and $j$ such that $i \ge j$. Since
+$\min(i, j) = j$, the loop invariant (of previous iteration) along with the
+conditions of lines 7 and 10 ensures that every element of $A[p, \dots, j]$
+  will be less than or equal to every element of $A[j + 1, \dots, r]$.
+\end{itemize}
+}
+\item{The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Hoare-Quicksort}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+ \If{$p < r$}{%
+   $q = \texttt{Hoare-Partition}(A, p, r)$\;
+   \texttt{Hoare-Partition}$(A, p, q)$\;
+   \texttt{Hoare-Partition}$(A, q + 1, r)$\; } }
+\end{algorithm}
+}
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[7{-}2]{\textbf{\emph{Quicksort with equal element values}}\\
+The analysis of the expected running time of randomized quicksort in Section
+7.4.2 assumes that all element values are distinct. In this problem, we examine
+what happens when they are not.
+
+\begin{enumerate}
+\item[\textbf{a.}]{Suppose that all element values are equal. What would be
+randomized quicksort's running time in this case?}
+
+\item[\textbf{b.}]{The \textsc{Partition} procedure returns an index $q$ such
+that each element of $A[p, \dots, q - 1]$ is less than or equal to $A[q]$ and
+each element of $A[q + 1, \dots, r]$ is greater than $A[q]$. Modify the
+\textsc{Partition} procedure to produce a procedure
+\textsc{Partition'}$(A, p, r)$, which permutes the elements of $A[p, \dots, r]$
+and returns two indices $q$ and $t$, where $p \le q \le t \le r$, such that
+\begin{itemize}
+\item{all elements if $A[q, \dots, t]$ are equal,}
+\item{each element of $A[p, \dots, q - 1]$ is less than $A[q]$, and}
+\item{each element of $A[r + 1, \dots, r]$ is greater than $A[q]$.}
+\end{itemize}
+
+Like \textsc{Partition}, your \textsc{Partition'} procedure should take
+$\Theta(r - p)$ time.
+}
+\end{enumerate}
+
+\begin{enumerate}
+\item[\textbf{c.}]{Modify the \textsc{Randomized-Partition} procedure to call
+\textsc{Partition'}, and name the new procedure \textsc{Randomized-Partition'}.
+Then modify the \textsc{Quicksort} procedure to produce a procedure
+\textsc{Quicksort'}$(A, p, r)$ that calls \textsc{Randomized-Partition'} and
+recurses only on partitions of elements not known to be equal to each other.}
+
+\item[\textbf{d.}]{Using \textsc{Quicksort'}, how would you adjust the analysis
+in Section 7.4.2 to avoid the assumption that all elements are distinct?}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{In this case, the condition on line 4 of the \textsc{Partition} procedure
+will always be valid and it will always give ``bad'' splits
+($(n - 1)$-to-0). Thus, the running time will be $\Theta(n^2)$.}
+\item{This item is similar to the Question 7.1-2. The pseudocode of the modified
+\textsc{Partition} procedure is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Partition'}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  $x = A[r]$\;
+  $i = j = p - 1$\;
+  \For{$k = p$ \KwTo $r - 1$}{%
+    \If{$A[k] \le x$}{%
+      $j = j + 1$\;
+      exchange $A[j]$ with $A[k]$\;
+      \If{$A[j] < x$}{%
+        $i = i + 1$\;
+        exchange $A[i]$ with $A[j]$\;
+      }
+    }
+  }
+  exchange $A[j + 1]$ with $A[r]$\;
+  $q = i + 1$\;
+  $t = j + 1$\;
+  \Return{$q, t$}\; }
+\end{algorithm}
+}
+\item{The pseudocode of the modified \textsc{Randomized-Partition}
+\textsc{Quicksort} procedures are stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Randomized-Partition'}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  $i = \texttt{Random}(p, r)$\;
+  exchange $A[r]$ with $A[i]$\;
+  \Return{\texttt{\upshape{Partition'}}$(A, p, r)$}\; }
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Quicksort'}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  \If{$p < r$}{%
+    $q, t = \texttt{Randomized-Partition'}(A, p, r)$\;
+    \texttt{Quicksort'}$(A, p, q - 1)$\;
+    \texttt{Quicksort'}$(A, t + 1, r)$\; } }
+\end{algorithm}
+}
+\item{We just need to rewrite the sentence
+\begin{quote}
+  In general, because we assume that element values are distinct, once a pivot
+  $x$ is chosen with $z_i < x < z_j$, we know that $z_i$ and $z_j$ cannot be
+  compared at any subsequent time.
+\end{quote}
+as
+\begin{quote}
+  Once a pivot $z_q$ is chosen with $z_i \le z_q \le z_j$, such that
+  $i \neq q$ and $j \neq q$, we know that $z_i$ and $z_j$ cannot be compared at
+  any subsequent time.
+\end{quote}
+}
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[7{-}3]{\textbf{\emph{Alternative quicksort analysis}}\\
+An alternative analysis of the running time of randomized quicksort focuses on
+the expected running time of each individual recursive call to
+\textsc{Randomized-Quicksort}, rather than on the number of comparisons
+performed.
+
+\begin{enumerate}
+\item[\textbf{a.}]{Argue that, given an array of size $n$, the probability that
+any particular element is chosen as the pivot is $1/n$. Use this to define
+indicator random variables
+$X_i = \text{I}\{i\text{th smallest element is chosen as the pivot}\}$. What is
+$\text{E}[X_i]$?}
+
+\item[\textbf{b.}]{Let $T(n)$ be a random variable denoting the running time of
+quicksort on an array of size $n$. Argue that
+\[
+  \text{E}[T(n)] = \text{E}\left[ \sum_{q = 1}^{n}{X_q (T(q - 1) + T(n - q) + \Theta(n))} \right].
+\]}
+
+\item[\textbf{c.}]{Show that we can rewrite equation (7.5) as
+\[
+  \text{E}[T(n)] = \frac{2}{n} \sum_{q = 2}^{n - 1} \text{E}[T(q)] + \Theta(n).
+\]}
+
+\item[\textbf{d.}]{Show that
+\[
+  \sum_{k = 2}^{n - 1}{k \lg k} \le \frac{1}{2} n^2 \lg n - \frac{1}{8} n^2.
+\]
+(\emph{Hint:} Split the summation into two parts, one for
+$k = 2, 3, \dots, \ceil{n/2} - 1$ and one for $k = \ceil{n/2}, \dots, n - 1$.)}
+
+\item[\textbf{e.}]{Using the bound from equation (7.7), show that the recurrence
+in equation (7.6) has the solution $\text{E}[T(n)] = \Theta(n \lg n)$.
+(\emph{Hint:} Show, by substitution, that $\text{E}[T(n)] \le a n \lg n$ for
+sufficiently large $n$ and for some positive constant $a$.)}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{In each recursive call to \textsc{Randomized-Quicksort}, the pivot is
+randomly chosen among the $n$ elements of the input subarray. Thus, we have
+\[
+  \text{E}[X_i] = \text{Pr}\{X_i = 1\} = \frac{1}{n}.
+\]
+}
+\item{Each call to \textsc{Partition} tales $\Theta(n)$ and once the $q$th }
+\item{Each call to \textsc{Quicksort} selects a pivot $q$, such that
+$1 \le q \le n$, that partitions the array into two subarrays of sizes $q - 1$
+and $n - q$. The indicator random variable $X_q$ indicates whether the element
+with index $q$ is selected as the pivot. Since only one element can be chosen as
+the pivot at a given call to \textsc{Quicksort} and the running time of each
+call is $\Theta(n)$, the running time of \textsc{Quicksort} can be written as
+\[
+  T(n) = \sum_{q = 1}^{n} X_q ( T(q - 1) + T(n - q) + \Theta(n) ),
+\]
+which implies
+\[
+  \text{E}[T(n)] = \text{E}\left[\sum_{q = 1}^{n} X_q (T(q - q) + T(n - q) +
+                                                  \Theta(n)) \right].
+\]
+}
+\item{
+\begin{equation*}
+\begin{aligned}
+\text{E}[T(n)]
+&= \text{E}\left[\sum_{q = 1}^{n} X_q (T(q - q) + T(n - q) + \Theta(n)) \right]\\
+&= \sum_{q = 1}^{n} \text{E}[ X_q (T(q - 1) + T(n - q) + \Theta(n)) ]\\
+&= \sum_{q = 1}^{n} \left( \frac{1}{n} \cdot \text{E}[(T(q - 1) + T(n - q) + \Theta(n)) ] \right)\\
+&= \frac{1}{n} \cdot \sum_{q = 1}^{n} \text{E}[T(q - 1)] +
+   \frac{1}{n} \cdot \sum_{q = 1}^{n} \text{E}[T(n - q)] +
+   \frac{1}{n} \cdot \sum_{q = 1}^{n} \Theta(n)\\
+&= \frac{1}{n} \cdot \sum_{q = 2}^{n - 1} \text{E}[T(q)] +
+   \frac{1}{n} \cdot \Theta(1) +
+   \frac{1}{n} \cdot \sum_{q = 2}^{n - 1} \text{E}[T(q)] +
+   \frac{1}{n} \cdot \Theta(1) +
+   \Theta(n)\\
+&= \frac{2}{n} \cdot \sum_{q = 2}^{n - 1} \text{E}[T(q)] +
+   \Theta(n).
+\end{aligned}
+\end{equation*}
+}
+\item{We guess that
+\[
+  \text{E}[T(n)] \le a n \lg n,
+\]
+for some constant $a$. Substituting into the recurrence yields
+\begin{equation*}
+\begin{aligned}
+  \text{E}[T(n)] &\le \frac{2}{n} \sum_{q = 2}^{n - 1} ( a q \lg q ) + \Theta(n)\\
+                 &=   \frac{2a}{n} \sum_{q = 2}^{n - 1} ( q \lg q ) + \Theta(n)\\
+                 &\le \frac{2a}{n} \left( \frac{1}{2} n^2 \lg n - \frac{1}{8} n^2 \right) + \Theta(n)\\
+                 &=   a n \lg n - a \frac{1}{4} n + \Theta(n)\\
+                 &\le a n \lg n,
+\end{aligned}
+\end{equation*}
+since we pick the constant $a$ large enough so that the $a (1/4) n$ term
+dominates the $\Theta(n)$ term.
+}
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[7{-}4]{\textbf{\emph{Stack depth for quicksort}}\\
+The \textsc{Quicksort} algorithm of Section 7.1 contains two recursive calls to
+itself. After \textsc{Quicksort} calls \textsc{Partition}, it recursively sorts
+the left subarray and then it recursively sorts the right subarray. The second
+recursive call in \textsc{Quicksort} is not really necessary; we can avoid it by
+using an iterative control structure. This technique, called \textbf{\emph{tail
+recursion}}, is provided automatically by good compilers. Consider the following
+version of quicksort, which simulates tail recursion:
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Tail-Recursive-Quicksort}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+ \While{$p < r$}{%
+   // Partition and sort left subarray\;
+   $q = \texttt{Partition}(A, p, r)$\;
+   \texttt{Tail-Recursive-Quicksort}(A, p, q - 1)\;
+   $p = q + 1$\; } }
+\end{algorithm}
+
+\begin{enumerate}
+\item[\textbf{a.}]{Argue that \textsc{Tail-Recursive-Quicksort}$(A, 1,
+A.length)$ correctly sorts the array $A$.}
+\end{enumerate}
+
+Compilers usually execute recursive procedures by using a \textbf{\emph{stack}}
+that contains pertinent information, including the parameter values, for each
+recursive call. The information for the most recent call is at the top of the
+stack, and the information for the initial call is at the bottom. Upon calling
+a procedure, its information is \textbf{\emph{pushed}} onto the stack; when it
+terminates, its information is \textbf{\emph{popped}}. Since we assume that
+array parameters are represented by pointers, the information for each procedure
+call on the stack requires $O(1)$ stack space. The stack depth is the maximum
+amount of \textbf{\emph{stack space}} used at any time during a computation.
+
+\begin{enumerate}
+\item[\textbf{b.}]{Describe a scenario in which
+\textsc{Tail-Recursive-Quicksort's} stack depth is $\Theta(n)$ on an
+$n$-element array.}
+
+\item[\textbf{c.}]{Modify the code for \textsc{Tail-Recursive-Quicksort} so that
+the worst-case stack depth is $\Theta(\lg n)$. Maintain the $O(n \lg n)$
+expected running time of the algorithm.}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{After the \textsc{Partition} call, the algorithm calls itself with
+arguments $A, p, q - 1$, sets $p = q + 1$, and repeat the same operations. Since
+the only difference to the next iteration is the new value of $p$, the loop
+is similar as calling itself with arguments $A, q + 1, r$. Thus,
+\textsc{Tail-Recursive-Quicksort}} produces the same result of
+\textsc{Quicksort}.
+\item{If the \textsc{Partition} procedure always select the largest element of
+the array as the pivot, the left subarray will always have size $n - 1$, and the
+stack depth will be $\Theta(n)$.}
+\item{To reduce the maximum stack depth, we should always give to the tail
+recursion the larger of the two subproblems. The updated pseudocode is stated
+below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Tail-Recursive-Quicksort-Improved}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+ \While{$p < r$}{%
+   // Partition and sort left subarray\;
+   $q = \texttt{Partition}(A, p, r)$\;
+   \If{$q < (p + r)/2$}{%
+     \texttt{Tail-Recursive-Quicksort}(A, p, q - 1)\;
+     $p = q + 1$\; }
+   \Else{%
+     \texttt{Tail-Recursive-Quicksort}(A, q + 1, r)\;
+     $r = q - 1$\;
+   } } }
+\end{algorithm}
+
+Each recursive call reduces the problem size by at least half. Thus, the stack
+depth is $O(\lg n)$.
+}
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[7{-}5]{\textbf{\emph{Median-of-3 partition}}\\
+One way to improve the \textsc{Randomized-Quicksort} procedure is to partition
+around a pivot that is chosen more carefully than by picking a random element
+from the subarray. One common approach is the \textbf{\emph{median-of-3}}
+method: choose the pivot as the median (middle element) of a set of 3 elements
+randomly selected from the subarray. (See Exercise 7.4-6.) For this problem, let
+us assume that the elements in the input array $A[1, \dots, n]$ are distinct and
+that $n \ge 3$. We denote the sorted output array by $A'[1, \dots, n]$. Using
+the median-of-3 method to choose the pivot element $x$, define
+$p_i = \text{Pr}\{x = A'[i]\}$.
+
+\begin{enumerate}
+\item[\textbf{a.}]{Give an exact formula for $p_i$ as a function of $n$ and $i$
+for $i = 2, 3, \dots, n - 1$. (Note that $p_1 = p_n = 0$.)}
+
+\item[\textbf{b.}]{By what amount have we increased the likelihood of choosing
+the pivot as $x = A'[\floor{(n + 1)/2}]$, the median of $A[1, \dots, n]$,
+compared with the ordinary implementation? Assume that $n \rightarrow \infty$,
+and give the limiting ratio of these probabilities.}
+
+\item[\textbf{c.}]{If we define a ``good'' split to mean choosing the pivot as
+$x = A'[i]$, where $n/3 \le i \le 2n/3$, by what amount have we increased the
+likelihood of getting a good split compared with the ordinary implementation?
+(\emph{Hint:} Approximate the sum by an integral.)}
+
+\item[\textbf{d.}]{Argue that in the $\Omega(n \lg n)$ running time of
+quicksort, the median-of-3 method affects only the constant factor.}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{Note that the number of 3-permutations on a set of $n$ elements is
+\[
+  \frac{n!}{(n - 3)!} = n (n - 1) (n - 2).
+\]
+
+To choose the element $i$ as the pivot, one element needs to be within the first
+$i - 1$ positions of the array, one elements needs to be within the last $n - i$
+positions of the array, and one element needs to be the $i$th element. Also note
+that each combination of elements that chooses the element $i$ as the pivot has
+$3! = 6$ permutations; hence 6 ways to be selected. Thus, we have
+\[
+  p_i = \frac{3! \cdot 1 \cdot (i - 1) \cdot (n - i)}{n!/(n - 3)!} = \frac{6 (i - 1) (n - i)}{n (n - 1) (n - 2)}.
+\]}
+\item{We have
+\begin{equation*}
+\begin{aligned}
+p_{\floor{(n + 1)/2}}
+  &=   \frac{6 \cdot \left(\Bigl\lfloor\frac{n + 1}{2}\Bigr\rfloor - 1\right)
+                     \left(n - \Bigl\lfloor\frac{n + 1}{2}\Bigr\rfloor\right)}{n (n - 1) (n - 2)}\\
+&\le \frac{6 \cdot \left(\frac{n + 1}{2} - 1\right) \left(n - \frac{n + 1}{2}\right)}{n (n - 1) (n - 2)}\\
+&=   \frac{6 \cdot \left(\frac{n - 1}{2}\right) \left(\frac{n - 1}{2}\right)}{n (n - 1) (n - 2)}\\
+&=   \frac{3}{2} \cdot \frac{(n - 1) (n - 1)}{n (n - 1) (n - 2)}\\
+&=   \frac{3}{2} \cdot \frac{(n - 1)}{n (n - 2)}.
+\end{aligned}
+\end{equation*}
+Then, we have the ratio
+\[
+\lim_{n\to\infty} \frac{\frac{3}{2} \cdot \frac{n - 1}{n (n - 2)}}{\frac{1}{n}}
+= \lim_{n\to\infty} \frac{3}{2} \frac{n (n - 1)}{n (n - 2)} = \frac{3}{2} = 1.5.
+\]
+}
+\item{To get a ``good'' split with the median-of-3 method, the pivot can not be
+within the first $\floor{n/3}$ elements or within the last $\ceil{n/3}$
+elements. Thus, we have
+\[
+\text{Pr}\{\text{good split with median-of-3}\} = \sum_{i = \ceil{n/3}}^{\floor{2n/3}} p_i
+\approx \sum_{i = n/3}^{2n/3} p_i
+= \sum_{i = n/3}^{2n/3} \frac{6 (i - 1) (n - i)}{n (n - 1) (n - 2)}
+= \frac{6}{n (n - 1) (n - 2)} \cdot \sum_{i = n/3}^{2n/3} (i - 1) (n - i).
+\]
+
+Note that
+\begin{equation*}
+\begin{aligned}
+\sum_{x = n/3}^{2n/3} (x - 1) (n - x)
+&\approx \int_{n/3}^{2n/3} (x - 1) (n - x) dx\\
+&= \int_{n/3}^{2n/3} (nx -x^2 - n + x) dx\\
+&= \Eval{-\frac{1}{3} x^3 + \frac{1}{2} x^2 (n + 1) - xn}{n/3}{2n/3}\\
+&= \frac{13}{162} n^3 - \frac{1}{6} n^2,
+\end{aligned}
+\end{equation*}
+which implies
+\[
+ \text{Pr}\{\text{good split with median-of-3}\} \approx \frac{6}{n (n - 1)(n - 2)} \left( \frac{13}{162} n^3 - \frac{1}{6} n^2 \right)
+= \frac{\frac{13}{27} n^3 - n^2}{n (n - 1) (n - 2)}.
+\]
+
+Then, we have the ratio
+\[
+\frac{\text{Pr}\{\text{good split with median-of-3}\}}{\text{Pr}\{\text{good split with one pivot}\}}
+= \lim_{n\to\infty} \frac{\frac{\frac{13}{27} n^3 - n^2}{n (n - 1) (n - 2)}}{\frac{1}{3}}
+= \lim_{n\to\infty} \frac{\frac{\frac{13}{27} n^3 - n^2}{n^3 - n^2 - 2n}}{\frac{1}{3}}
+= \lim_{n\to\infty} \frac{\frac{13}{27}}{\frac{1}{3}} \approx 1.44.
+\]
+
+}
+\item{The only difference is on the choice of the pivot. However, even if the
+middle element is always chosen as the pivot (which is the best case), the
+height of the recursion tree will be $\Theta(\lg n)$. Since each recursion level
+takes $\Theta(n)$, the running time is still $\Omega(n \lg n)$.}
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[7{-}6]{\textbf{\emph{Fuzzy sorting of intervals}}\\
+Consider a sorting problem in which we do not know the numbers exactly. Instead,
+for each number, we know an interval on the real line to which it belongs.
+That is, we are given $n$ closed intervals of the form $[a_i, b_i]$, where
+$a_i \le b_i$. We wish to \textbf{\emph{fuzzy-sort}} these intervals, i.e., to
+produce a permutation $\langle i_1, i_2, \dots, i_n \rangle$ of the intervals
+such that for $j = 1, 2, \dots, n$, there exist $c_j \in [a_{i_j}, b_{i_j}]$
+satisfying $c_1 \le c_2 \le \cdots \le c_n$.
+
+\begin{enumerate}
+\item[\textbf{a.}]{Design a randomized algorithm for fuzzy-sorting $n$
+intervals.  Your algorithm should have the general structure of an algorithm
+that quicksorts the left endpoints (the $a_i$ values), but it should take
+advantage of overlapping intervals to improve the running time. (As the
+intervals overlap more and more, the problem of fuzzy-sorting the intervals
+becomes progressively easier. Your algorithm should take advantage of such
+overlapping, to the extent that it exists.)}
+
+\item[\textbf{b.}]{Argue that your algorithm runs in expected time
+$\Theta(n \lg n)$ in general, but runs in expected time $\Theta(n)$ when all of
+the intervals overlap (i.e., when there exists a value $x$ such that
+$x \in [a_i, b_i]$ for all $i$). Your algorithm shoukd not be checking for this
+case explicitly; rather, its performance should naturally improve as the amount
+of overlap increases.}
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item{
+Note that any subset of intervals that share a common point are already sorted.
+Using this notion, we can sort an array of fuzzy intervals with an algorithm
+similar to quicksort, but with a customized partition procedure that returns two
+indices $q$ and $t$, where $p \le q \le t \le r$, such that
+\begin{itemize}
+\item There exist $x$ such that $x \in [a_i, b_i]$ for all $q \le i \le t$. That
+is, any permutation of the subarray $A[q, \dots, t]$ is sorted;
+\item For all $j < q$, there exist $c_j \in [a_j, b_j]$ such that $c_j < b_i$
+for all $q \le i \le t$. That is, every interval of $A[p, \dots, q - 1]$ can
+stay before every interval of $A[q, \dots, t]$ in the sorted array;
+\item For all $j > t$, there exist $c_j \in [a_j, b_j]$ such that $c_j > a_i$
+for all $q \le i \le t$. That is, every interval of $A[t + 1, \dots, r]$ can
+stay after every interval of $A[q, \dots, t]$ in the sorted array.
+\end{itemize}
+
+The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Fuzzy-Partition}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  $a = A[r].a$\;
+  $b = A[r].b$\;
+  $i = j = p - 1$\;
+  \For{$k = p$ \KwTo $r - 1$}{%
+    // $A[k]$ can be placed before the pivot\;
+    \If{$A[k].a \le b$}{%
+      $j = j + 1$\;
+      exchange $A[j]$ with $A[k]$\;
+      // $A[k]$ does not overlap the pivot\;
+      \If{$A[j].b < a$}{%
+        $i = i + 1$\;
+        exchange $A[i]$ with $A[j]$\;
+      }
+      // $A[k]$ has overlap the pivot\;
+      \Else{%
+        \If{$A[k].a > a$}{%
+          $a = A[k].a$\;
+        }
+        \If{$A[k].b < b$}{%
+          $b = A[k].b$\;
+        }
+      }
+    }
+  }
+  exchange $A[j + 1]$ with $A[r]$\;
+  $q = i + 1$\;
+  $t = j + 1$\;
+  \Return{$q, t$}
+}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Fuzzy-Randomized-Partition}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  $i = \texttt{Random}(p, r)$\;
+  exchange $A[r]$ with $A[i]$\;
+  \Return{\upshape{\texttt{Fuzzy-Partition}}$(A, p, r)$}\; }
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Fuzzy-Sort}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r}}{%
+  \If{$p < r$}{%
+    $q, t = \texttt{Fuzzy-Randomized-Partition}(A, p, r)$\;
+    \texttt{Fuzzy-Sort}$(A, p, q - 1)$\;
+    \texttt{Fuzzy-Sort}$(A, t + 1, r)$\; } }
+\end{algorithm}
+}
+
+\newpage
+
+\item{When all intervals share a common point, the array is already sorted. In
+this case, there will be only one call to \textsc{FuzzyPartition}, which will
+return $q = p$ and $t = r$. Thus, the algorithm will run in $\Theta(n)$.
+
+The general case is a little tricky to proof.}
+\end{enumerate}
 \end{framed}
 
 \end{enumerate}
