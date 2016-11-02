@@ -1,0 +1,243 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered]{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{interval}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 8 {--} Sorting in Linear Time}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+%                       PROPERTIES                          %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\tikzset{every tree node/.style={minimum width=1.95em,draw,circle,font=\footnotesize},
+         blank/.style={draw=none},
+         edge from parent/.style=
+         {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
+         level distance=1cm}
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\intervalconfig{soft open fences}
+
+\let\oldnl\nl% Store \nl in \oldnl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 8.1 {--} Lower bounds for sorting}
+
+\begin{enumerate}
+
+\item[8.1{-}1]{What is the smallest possible depth of a leaf in a decision tree
+for a comparison sort?}
+
+\begin{framed}
+The smallest possible depth of a leaf in a decision tree
+can be obtained by calculating the shortest simple path from the root to any
+of its reachable leaves. This smallest path occurs when the comparisons is made
+in the sorted order. For instance, if the input array is sorted, the following
+comparisons suffices
+\begin{equation*}
+\begin{aligned}
+  a_1 &\le a_2,\\
+  a_2 &\le a_3,\\
+  &\;\;\vdots\\
+  a_{n - 1} &\le a{n}.
+\end{aligned}
+\end{equation*}
+
+Thus, the smallest depth of a leaf is any decision tree is $n - 1 = \Theta(n)$.
+
+\end{framed}
+
+\item[8.1{-}2]{Obtain asymptotically tight bounds on $\lg(n!)$ without using
+Stirling's approximation. Instead, evaluate the summation $\sum_{k = 1}^n \lg k$
+using techniques from Section A.2.}
+
+\begin{framed}
+Assume for convenience that $n$ is even. For a lower bound, we have
+\begin{equation*}
+\begin{aligned}
+  \lg{n!} &=   \lg(n \cdot (n - 1) \cdot (n - 2) \cdots 1)\\
+          &=   \sum_{k = 1}^{n} \lg k\\
+          &=   \sum_{k = 1}^{n/2} \lg k + \sum_{k = n/2 + 1}^{n} \lg k\\
+          &\ge \sum_{k = 1}^{n/2} 0 + \sum_{k = n/2 + 1}^{n} \lg (n/2)\\
+          &=   \frac{n}{2} \lg{\frac{n}{2}}\\
+          &=   \frac{n}{2} \lg n - \frac{n}{2}\\
+          &=   \Omega(n \lg n).
+\end{aligned}
+\end{equation*}
+
+And for an upper bound, we have
+\begin{equation*}
+\begin{aligned}
+  \lg{n!} &=   \lg(n \cdot (n - 1) \cdot (n - 2) \cdots 1)\\
+          &=   \sum_{k = 1}^{n} \lg k\\
+          &\le \sum_{k = 1}^{n} \lg n\\
+          &=   O(n \lg n).
+\end{aligned}
+\end{equation*}
+
+Thus, $\lg n! = \Theta(n \lg n)$.
+\end{framed}
+
+\newpage
+
+\item[8.1{-}3]{Show that there is no comparison sort whose running time is
+linear for at least half of the $n!$ inputs of length $n$. What about a fraction
+of $1/n$ of the inputs of length $n$?  What about a fraction $1/2^n$?}
+
+\begin{framed}
+Such algorithm only exists if we can build a decision tree such that at least
+$n!/2$ of its $n!$ leaves has a depth of $\Theta(n)$. Suppose this decision tree
+exists. Let $m$ be the depth of the leaf with the ($n!/2$)th smallest depth.
+Remove all nodes with depth greater than $m$. The result is a decision tree
+with height $m$ and at least $n!/2$ leaves. Using the same reasoning as in the
+proof of Theorem 8.1, for every decision tree with at least $n!/2$ leaves, we
+have
+\[
+  \frac{n!}{2} \le l \le 2^{m},
+\]
+which implies
+\[
+  m \ge \lg \frac{n!}{2} = \lg n! - 1 = \Omega(n \lg n),
+\]
+which proves that such a decision tree does not exists. The same reasoning can
+be applied to obtain the maximum depth of any fraction of the inputs. For
+a fraction of $1/n$, we have
+\[
+  m \ge \lg \frac{n!}{n} = \lg n! - \lg n = \Omega(n \lg n),
+\]
+and for a fraction of $1/2^n$, we have
+\[
+  m \ge \lg \frac{n!}{2^n} = \lg n! - \lg 2^n = \lg n! - n = \Omega(n \lg n).
+\]
+\end{framed}
+
+\item[8.1{-}4]{Suppose that you are given a sequence of $n$ elements to sort.
+The input sequence consists of $n/k$ subsequences, each containing $k$ elements.
+The elements in a given subsequence are all smaller than the elements in the
+succeeding subsequence and larger than the elements in the preceding
+subsequence. Thus, all that is needed to sort the whole sequence of length
+$n$ is to sort the $k$ elements in each of the $n/k$ subsequences. Show an
+$\Omega(n \lg k)$ lower bound on the number of comparisons needed to solve this
+variant of the sorting problem. (\emph{Hint}: It is not rigorous to simply
+combine the lower bounds for the individual subsequences.)}
+
+\begin{framed}
+All we know is the ordering of the elements of a given subsequence with respect
+to the elements of the previous/next subsequence. Thus, for each subsequence,
+we have $k!$ possible permutations. Since there are $n/k$ input subsequences,
+the number of possible outcomes for this sorting problem is
+\[
+  \prod_{i = 1}^{n/k} k! = k!^{(n/k)}.
+\]
+
+We can use here the same argument used in the text book to prove a lower bound
+for any comparison sort algorithm. However, in this case, the number of possible
+permutations is $k!^{(n/k)}$, instead of $n!$.  Thus, we need to show that the
+height of any decision tree with at least $k!^{(n/k)}$ leaves is
+$\Omega(n \lg k)$.  We have
+\[
+  k!^{n/k} \le l \le 2^h,
+\]
+which implies
+\begin{equation*}
+\begin{aligned}
+h &\ge \lg \left( k!^{(n/k)} \right)\\
+  &=   \frac{n}{k} \cdot \lg k!\\
+  &=   \frac{n}{k} \cdot \sum_{i = 1}^{k} \lg i\\
+  &=   \frac{n}{k} \cdot \sum_{i = 1}^{\floor{k/2}} \lg i + \frac{n}{k} \cdot \sum_{i = \floor{k/2} + 1}^{k} \lg i\\
+  &\ge \frac{n}{k} \cdot \sum_{i = \floor{k/2}}^{k} \lg i\\
+  &\ge \frac{n}{k} \cdot \left( \frac{k}{2} \lg \frac{k}{2} \right)\\
+  &=   \frac{n}{2} \lg \frac{k}{2}\\
+  &=   \Omega(n \lg k).\\
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\end{enumerate}
+
+\end{document}
