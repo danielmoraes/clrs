@@ -15,7 +15,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{framed}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{algpseudocode}
 \usepackage[linesnumbered]{algorithm2e} % for psuedo code
 \usepackage{courier}
@@ -56,6 +56,7 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 \newcommand{\Perp}{\perp\! \! \! \perp}
+
 
 %                       PROPERTIES                          %
 % --------------------------------------------------------- %
@@ -236,6 +237,108 @@ h &\ge \lg \left( k!^{(n/k)} \right)\\
   &=   \Omega(n \lg k).\\
 \end{aligned}
 \end{equation*}
+\end{framed}
+
+\end{enumerate}
+
+{\large Section 8.2 {--} Counting sort}
+
+\begin{enumerate}
+
+\item[8.2-1]{Using Figure 8.2 as a model, illustrate the operation of
+\textsc{Counting-Sort} on the array
+$A = \langle 6, 0, 2, 0, 1, 3, 4, 6, 1, 3, 2 \rangle$.}
+
+\begin{framed}
+\newcommand\x{${--}$}
+\newcommand\y{\cellcolor{white}}
+\newcommand\z{\rowcolor{gray!15}}
+\[
+\begin{array}{cccccccccccc c cccccccc}
+  \y   & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & 10 & 11 & \y &
+  \y   & 0  & 1  & 2  & 3  & 4  & 5  & 6\\
+  \z
+  \y A & 6  & 0  & 2  & 0  & 1  & 3  & 4  & 6  & 1  & 3  & 2  & \y &
+  \y C & 2  & 2  & 2  & 2  & 1  & 0  & 2\\\\
+  \z
+  \y   & \y & \y & \y & \y & \y & \y & \y & \y & \y & \y & \y & \y &
+  \y C & 2  & 4  & 6  & 8  & 9  & 9  & 11\\\\
+  \z
+  \y B & \x & \x & \x & \x & \x & 2  & \x & \x & \x & \x & \x & \y &
+  \y C & 2  & 4  & 5  & 8  & 9  & 9  & 11\\\\
+  \z
+  \y B & \x & \x & \x & \x & \x & 2  & \x & 3  & \x & \x & \x & \y &
+  \y C & 2  & 4  & 5  & 7  & 9  & 9  & 11\\\\
+  \z
+  \y B & \x & \x & \x &  1 & \x & 2  & \x & 3  & \x & \x & \x & \y &
+  \y C & 2  & 3  & 5  & 7  & 9  & 9  & 11\\\\
+  \z
+  \y B & \x & \x & \x &  1 & \x & 2  & \x & 3  & 4  & \x & 6  & \y &
+  \y C & 2  & 3  & 5  & 7  & 8  & 9  & 10\\\\
+  \z
+  \y B & \x & \x & \x &  1 & \x & 2  & 3  & 3  & 4  & \x & 6  & \y &
+  \y C & 2  & 3  & 5  & 6  & 8  & 9  & 10\\\\
+  \z
+  \y B & \x & \x & 1  &  1 & \x & 2  & 3  & 3  & 4  & \x & 6  & \y &
+  \y C & 2  & 2  & 5  & 6  & 8  & 9  & 10\\\\
+  \z
+  \y B & \x & 0  & 1  &  1 & \x & 2  & 3  & 3  & 4  & \x & 6  & \y &
+  \y C & 1  & 2  & 5  & 6  & 8  & 9  & 10\\\\
+  \z
+  \y B & \x & 0  & 1  &  1 & 2  & 2  & 3  & 3  & 4  & \x & 6  & \y &
+  \y C & 1  & 2  & 4  & 6  & 8  & 9  & 10\\\\
+  \z
+  \y B & 0  & 0  & 1  &  1 & 2  & 2  & 3  & 3  & 4  & \x & 6  & \y &
+  \y C & 0  & 2  & 4  & 6  & 8  & 9  & 10\\\\
+  \z
+  \y B & 0  & 0  & 1  &  1 & 2  & 2  & 3  & 3  & 4  & 6  & 6  & \y &
+  \y C & 0  & 2  & 4  & 6  & 8  & 9  & 9
+\end{array}
+\]
+\end{framed}
+
+\item[8.2-2]{Prove that \textsc{Counting-Sort} is stable.}
+
+\begin{framed}
+Suppose that the integer $x$ appears $k$ times in the output array. Since the
+\textbf{for} loop of lines 10-12 iterates over the input array backwards, the
+first integer $x$ to be added to the output array on line 11 is the rightmost
+one. The decrement of the couting of $x$ on line 12 ensures that the next
+integer $x$ is added to the output array right before the previous one. This
+process repeats $k$ times, until the leftmost integer $x$ is added to the
+output array ($k - 1$ positions before the rightmost one). This property ensures
+that elements with equal value in the input array appears in the same order in
+the output array. Thus, the algorithm is stable.
+\end{framed}
+
+\item[8.2-3]{Suppose that we were to rewrite the \textbf{for} loop header in
+line 10 of the \textsc{Counting-Sort} as
+
+$10\quad\text{\textbf{for}}\;j = 1\;\text{\textbf{to}}\;A.length$
+
+Show that the algorithm still works properly. Is the modified algorithm stable?
+}
+
+\begin{framed}
+The only difference will be in the \textbf{for} loop of lines 10-12, in which
+elements with equal value in the input array will now be added to the output
+array in the same order as they appear in the input array. As observed on
+Question 8.2-2, each time an element with value $x$ is added to the output
+array, the next element with value $x$ is added right before the previous one.
+This implies that elements with equal value in the input array will appear in
+reverse order in the output array. Thus, this modified algorithm is not stable.
+\end{framed}
+
+\item[8.2-4]{Describe an algorithm that, given $n$ integers in the range $0$ to
+$k$, preprocesses its input and then answers any query about how many of the $n$
+integers fall into a range $[a \dots b]$ in $O(1)$ time. Your algorithm should
+use $\Theta(n + k)$ preprocessing time.}
+
+\begin{framed}
+For the preprocessing phase, build the array $C$ in the same way it is built in
+the \textsc{Couting-Sort} procedure (lines 1-8). This preprocessing will run in
+$\Theta(k) + \Theta(n) + \Theta(k) = \Theta(n + k)$. If $a > 0$, answer
+$C[b] - C[a - 1]$. Otherwise, answer $C[b]$.
 \end{framed}
 
 \end{enumerate}
