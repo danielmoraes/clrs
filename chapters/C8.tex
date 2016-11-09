@@ -241,6 +241,8 @@ h &\ge \lg \left( k!^{(n/k)} \right)\\
 
 \end{enumerate}
 
+\newpage
+
 {\large Section 8.2 {--} Counting sort}
 
 \begin{enumerate}
@@ -339,6 +341,205 @@ For the preprocessing phase, build the array $C$ in the same way it is built in
 the \textsc{Couting-Sort} procedure (lines 1-8). This preprocessing will run in
 $\Theta(k) + \Theta(n) + \Theta(k) = \Theta(n + k)$. If $a > 0$, answer
 $C[b] - C[a - 1]$. Otherwise, answer $C[b]$.
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 8.3 {--} Radix sort}
+
+\begin{enumerate}
+
+\item[8.3-1]{Using Figure 8.3 as a model, illustrate the operation of
+\textsc{Radix-Sort} on the following list of English words: COW, DOG, SEA, RUG,
+ROW, MOB, BOX, TAB, BAR, EAR, TAR, DIG, BIG, TEA, NOW, FOX.}
+
+\begin{framed}
+\newcommand{\x}[1]{\textbf{#1}}
+\begin{center}
+\texttt{
+\begin{tabular}{c}
+  COW\\
+  DOG\\
+  SEA\\
+  RUG\\
+  ROW\\
+  MOB\\
+  BOX\\
+  TAB\\
+  BAR\\
+  EAR\\
+  TAR\\
+  DIG\\
+  BIG\\
+  TEA\\
+  NOW\\
+  FOX
+\end{tabular}
+}
+$\rightarrow$
+\texttt{
+\begin{tabular}{c}
+  SE\x{A}\\
+  TE\x{A}\\
+  MO\x{B}\\
+  TA\x{B}\\
+  DO\x{G}\\
+  RU\x{G}\\
+  DI\x{G}\\
+  BI\x{G}\\
+  BA\x{R}\\
+  EA\x{R}\\
+  TA\x{R}\\
+  CO\x{W}\\
+  RO\x{W}\\
+  NO\x{W}\\
+  BO\x{X}\\
+  FO\x{X}
+\end{tabular}
+}
+$\rightarrow$
+\texttt{
+\begin{tabular}{c}
+  T\x{A}B\\
+  B\x{A}R\\
+  E\x{A}R\\
+  T\x{A}R\\
+  S\x{E}A\\
+  T\x{E}A\\
+  D\x{I}G\\
+  B\x{I}G\\
+  M\x{O}B\\
+  D\x{O}G\\
+  C\x{O}W\\
+  R\x{O}W\\
+  N\x{O}W\\
+  B\x{O}X\\
+  F\x{O}X\\
+  R\x{U}G
+\end{tabular}
+}
+$\rightarrow$
+\texttt{
+\begin{tabular}{c}
+  \x{B}AR\\
+  \x{B}IG\\
+  \x{B}OX\\
+  \x{C}OW\\
+  \x{D}IG\\
+  \x{D}OG\\
+  \x{E}AR\\
+  \x{F}OX\\
+  \x{M}OB\\
+  \x{N}OW\\
+  \x{R}OW\\
+  \x{R}UG\\
+  \x{T}AB\\
+  \x{T}AR\\
+  \x{T}EA\\
+  \x{S}EA
+\end{tabular}
+}
+\end{center}
+\end{framed}
+
+\item[8.3-2]{Which of the following sorting algorithms are stable: insertion
+sort, merge sort, heapsort, and quicksort? Give a simple scheme that makes any
+sorting algorithm stable. How much additional time and space does your scheme
+entail?}
+
+\begin{framed}
+\textsc{Insertion-Sort} and \textsc{Merge-Sort} are stable. \textsc{Heapsort}
+and \textsc{Quicksort} are not. To make any sorting algorithm stable, we can
+store the original index of each element in the array and use this index to
+break ties. The additional space required is $\Theta(n)$. The asymptotic running
+time is the same, since the number of comparisons will be at most twice.
+\end{framed}
+
+\item[8.3-3]{Use induction to prove that radix sort works. Where does your proof
+need the assumption that the intermediate sort is stable?}
+
+\begin{framed}
+Let $d$ be the number of columns in the input array, where the $d$th column
+contains the highest-order digit. \textsc{Radix-Sort} sorts one column at
+a time, from the column with the lowest-order digits to the column with the
+highest-order digits. The base case occurs when $d = 1$. Since in this case the
+elements on the array has a single digit, calling \textsc{Radix-Sort} in this
+case is the same as calling its sorting subroutine directly with the input array
+as an argument. Thus, \textsc{Radix-Sort} is correct when $d = 1$. Now assume
+\textsc{Radix-Sort} works for $d - 1$ columns. Note that sorting $d$ columns is
+equivalent to sorting $d - 1$ columns followed by calling the sorting subroutine
+on the $d$th column. The induction hypothesis ensures that \textsc{Radix-Sort}
+sorts $d - 1$ columns correctly. Since the sorting subroutine is stable, when
+sorting the $d$th column, digits that have the same value in the $d$th column
+will be kept in the same order as it was after sorting the $(d - 1)$th column.
+This implies that \textsc{Radix-Sort} breaks ties on higher-order digits by the
+lower-order digits, which is correct.
+
+The sorting subroutine must be stable since a tie that occur while sorting the
+$i$th digit is determined by the previous sorts of the lower-order digits. Since
+lower-order digits are sorted before higher-order digits, this property is
+ensured with an stable sorting algorithm.
+\end{framed}
+
+\item[8.3-4]{Show how to sort $n$ integers in the range $0$ to $n^3 - 1$ in
+$O(n)$ time.}
+
+\begin{framed}
+An integer in the range $0$ to $n^3 - 1$ is represented with at most
+$\lg n^3 = 3 \lg n$ bits. We can view a $(3 \lg n)$-bit integer as three
+$(\lg n)$-bit integers, so that $b = 3 \lg n$ and $r = \lg n$. With these
+settings, \textsc{Radix-Sort} correctly sorts these numbers in
+\[
+  \Theta\left( \frac{b}{r} \left( n + 2^r \right) \right)
+  = \Theta\left( \frac{3 \lg n}{\lg n} \left(n + 2^{\lg n}\right) \right)
+  = \Theta( 3 (n + n) )
+  = \Theta(n).
+\]
+\end{framed}
+
+\newpage
+
+\item[8.3-5]{($\star$) In the first card-sorting algorithm in this section,
+exactly how many sorting passes are needed to sort $d$-digit decimal numbers in
+the worst case? How many piles of cards would an operator need to keep track of
+in the worst case?}
+
+\begin{framed}
+Suppose that the card-sorting machine represents numbers in base $p$, such
+that $2 \le p \le 10$. For a given value of $p$, we have
+\begin{itemize}
+  \item Each card uses $c = \ceil{\log_p 10^d}$ columns;
+  \item Each column uses up to $p$ places.
+\end{itemize}
+
+Let $c$th-digit denote the most significant digit, the $(c - 1)$th-digit
+denote the 2nd most significant digit, and so on.
+
+The algorithm is recursive. It starts sorting on the $c$th-digit, which
+requires $p$ piles to distribute the cards in the worst-case. In the next level,
+the algorithm sorts each of the $p$ piles on the $(c - 1)$th-digit, which
+requires $p^2$ piles to distribute the cards in the worst-case (each of the
+$p$ piles is splitted into $p$ piles). This process goes for $c$ levels. Since
+the piles of the previous level can be reutilized in the current level, the
+number of piles required to distribute the cards in all levels is the number of
+piles required in the last level, which is
+\[
+  p^c.
+\]
+
+Note that to sort the cards on the $c$th-digit, only one sorting pass is needed
+to distribute the cards into $p$ piles. To sort on the next digit, these $p$
+piles that were sorted on the $c$th-digit must now be sorted on the
+$(c - 1)$th-digit, which will require another $p^1$ sorting passes to distribute
+them into $p^2$ piles. In general, to sort on the $i$th digit, $p^{c - i}$
+sorting passes are required in the worst-case. Thus, the number of sorting
+passes in the worst-case is
+\[
+  \sum_{i = 1}^{c} p^{c - i} = \sum_{i = 0}^{c - 1} p^{i} = \frac{p^c - 1}{p - 1}.
+\]
+
 \end{framed}
 
 \end{enumerate}
