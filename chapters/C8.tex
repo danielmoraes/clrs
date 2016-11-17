@@ -24,6 +24,7 @@
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \usepackage{interval}
+\usetikzlibrary{positioning}
 \usetikzlibrary{calc}
 
 %                         MARGINS                           %
@@ -58,7 +59,7 @@
 \newcommand{\Perp}{\perp\! \! \! \perp}
 
 
-%                       PROPERTIES                          %
+%                       DEFINITIONS                         %
 % --------------------------------------------------------- %
 
 \setlength{\parindent}{0cm}
@@ -99,6 +100,35 @@
 
 \let\oldnl\nl% Store \nl in \oldnl
 \newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
+
+\tikzset{
+node of list/.style = {
+             draw,
+             fill=orange!20,
+             minimum height=4.5mm,
+             minimum width=4.5mm,
+             node distance=6mm
+   },
+link/.style = {
+     -stealth,
+     shorten >=1pt
+     },
+array element/.style = {
+    draw, fill=white,
+    minimum width = 7mm,
+    minimum height = 5mm
+  }
+}
+
+\def\LinkedList#1{%
+  \foreach \index/\element in \list {
+     \node[node of list, right = of aux, name=\index] {\element};
+     \node[node of list, name=aux2, anchor=west] at ([xshift=-.4pt] \index.east) {};
+     \draw[link] (aux) -- (\index);
+     \coordinate (aux) at (aux2);
+   }
+   \fill (aux) circle(2pt);
+}
 
 %                        DOCUMENT                           %
 % --------------------------------------------------------- %
@@ -446,7 +476,7 @@ $\rightarrow$
 
 \item[8.3-2]{Which of the following sorting algorithms are stable: insertion
 sort, merge sort, heapsort, and quicksort? Give a simple scheme that makes any
-sorting algorithm stable. How much additional time and space does your scheme
+comparison sort stable. How much additional time and space does your scheme
 entail?}
 
 \begin{framed}
@@ -540,6 +570,243 @@ passes in the worst-case is
   \sum_{i = 1}^{c} p^{c - i} = \sum_{i = 0}^{c - 1} p^{i} = \frac{p^c - 1}{p - 1}.
 \]
 
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+{\large Section 8.4 {--} Bucket sort}
+
+\begin{enumerate}
+
+\item[8.4-1]{Using Figure 8.4 as a model, illustrate the operation of
+\textsc{Bucket-Sort} on the array
+$A = \langle .79, .13, .16, .64, .39, .20, .89, .53, .71, .42 \rangle$.}
+
+\begin{framed}
+\begin{center}
+\begin{tikzpicture}
+\node at (0, 0) {$A$};
+\foreach \index/\element/\list in {1/.79, 2/.13, 3/.16, 4/.64, 5/.39, 6/.20,
+                                   7/.89, 8/.53, 9/.71, 10/.42} {
+   \node[array element] (aux) at (0,-\index/2) {\element};
+   \node at (-0.7, -\index/2) {\index};
+}
+\end{tikzpicture}
+\qquad
+\begin{tikzpicture}
+\node at (0, 0.5) {$B$};
+  \foreach \index/\list in {0/, 1/{1/.13, 2/.16}, 2/{1/.20}, 3/{1/.39},
+                            4/{1/.42}, 5/{1/.53}, 6/{1/.64}, 7/{1/.79, 2/.71},
+                            8/{1/.89}, 9/} {
+   \node[array element] (aux) at (0,-\index/2) {};
+   \node at (-0.6, -\index/2) {\index};
+   \LinkedList{\list}
+}
+\end{tikzpicture}
+\end{center}
+\end{framed}
+
+\item[8.4-2]{Explain why the worst-case running time for bucket sort is
+$\Theta(n^2)$. What simple change to the algorithm preserves its linear
+average-case running time and makes its worst-case running time $O(n \lg n)$?}
+
+\begin{framed}
+The worst-case occurs when the input array is in decreasing order and every
+element falls into the same bucket. Since \textsc{Insertion-Sort} takes
+$\Theta(n^2)$ to sort an array of size $n$ that is in decreasing order, bucket
+sort will run in $\Theta(n^2)$.
+
+The worst-case running time can be improved replacing \textsc{Insertion-Sort}
+with $\textsc{Heapsort}$, which will make it run in $O(n \lg n)$. As for the
+average-case, the expected running time of this variation of bucket sort is
+\begin{equation*}
+\begin{aligned}
+  \text{E}[T(n)] &= \text{E}\left[ \Theta(n) + \sum_{i = 0}^{n - 1} O(n_i \lg n_i) \right]\\
+                 &= \Theta(n) + \sum_{i = 0}^{n - 1} \text{E}[O(n_i \lg n_i)]\\
+                 &= \Theta(n) + \sum_{i = 0}^{n - 1} O(\text{E}[n_i \lg n_i]).
+\end{aligned}
+\end{equation*}
+
+Using the same logic adopted in the text book to compute $\text{E}[n_i^2]$, we
+have
+\[
+  n_i = \sum_{j = 1}^{n} X_{ij},
+\]
+which implies
+\begin{equation*}
+\begin{aligned}
+  \text{E}[n_i \lg n_i] &=   \text{E}\left[ \sum_{j = 1}^{n} X_{ij} \lg \sum_{j = 1}^{n} X_{ij} \right]\\
+                        &\le \text{E}\left[ \sum_{j = 1}^{n} X_{ij} \sum_{j = 1}^{n} X_{ij} \right]\\
+                        &=   2 - \frac{1}{n}. & \text{(from equation (8.2))}
+\end{aligned}
+\end{equation*}
+
+Thus, the average-case running time of this variation of bucket sort is
+\[
+  \text{E}[T(n)] = \Theta(n) + \sum_{i = 0}^{n - 1} O\left(2 - \frac{1}{n}\right)
+                 = \Theta(n) + n \cdot O\left(1\right)
+                 = \Theta(n).
+\]
+\end{framed}
+
+\newpage
+
+\item[8.4-3]{Let $X$ be a random variable that is equal to the number of heads
+in two flips of a fair coin. What is $\text{E}[X^2]$? What is $\text{E}^2[X]$?}
+
+\begin{framed}
+Lets define the indicator random variable
+\[
+  X_i = \text{I}\{\text{flip } i \text{ comes up heap}\}.
+\]
+
+Thus, we have
+\[
+  X = X_1 + X_2,
+\]
+and
+\[
+  X^2 = (X_1 + X_2)^2 = X_1^2 + 2 X_1 X_2 + X_2^2.
+\]
+
+Note that
+\[
+  \text{E}[X_i] = \text{Pr}\{X_i = 1\} = \frac{1}{2},
+\]
+and
+\[
+  \text{E}[X_i^2] = 1^2 \cdot \frac{1}{2} + 0^2 \cdot \frac{1}{2} = \frac{1}{2}.
+\]
+
+Using the above definitions and linearity of expectation, we have
+\begin{equation*}
+\begin{aligned}
+  \text{E}[X^2] &= \text{E}[X_1^2 + 2 X_1 X_2 + X_2^2]\\
+                &= \text{E}[X_1^2] + 2 \text{E}[X_1 X_2] + \text{E}[X_2^2]\\
+                &= \frac{1}{2} + 2 \left(\text{E}[X_1] \text{E}[X_2]\right) + \frac{1}{2} & \text{(since $X_1$ and $X_2$ are independent)}\\
+                &= \frac{1}{2} + 2 \left(\frac{1}{2} \cdot \frac{1}{2}\right) + \frac{1}{2}\\
+                &= \frac{3}{2},
+\end{aligned}
+\end{equation*}
+and
+\begin{equation*}
+\begin{aligned}
+  \text{E}^2[X] &= \text{E}^2[X_1 + X_2]\\
+                &= \text{E}[X_1 + X_2] \text{E}[X_1 + X_2]\\
+                &= ( \text{E}[X_1] + \text{E}[X_2] ) ( \text{E}[X_1] + \text{E}[X_2] )\\
+                &= \left( \frac{1}{2} + \frac{1}{2} \right) \left( \frac{1}{2} + \frac{1}{2} \right)\\
+                &= 1.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\newpage
+
+\item[8.4-4]{($\star$) We are given $n$ points in the unit circle,
+$p_i = (x_i, y_i)$, such that $0 < x^2_i + y^2_i \le 1$ for
+$i = 1, 2, \dots, n$. Suppose that the points are uniformly distributed; that
+is, the probability of finding a point in any region of the circle is
+proportional to the area of that region. Design an algorithm with an
+average-case running time of $\Theta(n)$ to sort the $n$ points by their
+distances $d_i = \sqrt{x^2_i + y^2_i}$ from the origin. (\emph{Hint:} Design the
+bucket sizes in \textsc{Bucket-Sort} to reflect the uniform distribution of the
+points in the unit circle.)}
+
+\begin{framed}
+
+Considering that the points are uniformly distributed over the area of the unit
+circle, we can divide the circle into $n$ rings with equal area, such that the
+expected number of points in each ring is $1$. The figure below illustrates
+a circle that is divided into three rings with equal area.
+
+\begin{center}
+\begin{tikzpicture}[black]
+  \draw node at (0.0, 0.0) {.};
+  \draw node at (0.32, 0.0) {\tiny 1};
+  \draw node at (0.69, 0.0) {\tiny 2};
+  \draw node at (0.91, 0.0) {\tiny 3};
+  \foreach \i in {1, 2, 3} {
+    \draw (0,0) circle ({sqrt(\i) / sqrt(3)});
+  }
+\end{tikzpicture}
+\end{center}
+
+We them assign to the $i$th bucket the points that falls within the $i$th ring,
+sort each bucket individually with \textsc{Insertion-Sort}, and combine the
+elements of each bucket sequentially. This is basically the \textsc{Bucket-Sort}
+algorithm with a modification on the way we assign the elements to the buckets.
+Since the distribution of points over the buckets is uniform, the average-case
+running time of this algorithm is still $O(n)$.
+
+We now need a function that maps a point to its bucket. Let $r_i$ denote the
+(larger) radius of the $i$th ring. We claim that
+\[
+  r_i = \frac{\sqrt{i}}{\sqrt{n}},
+\]
+which implies that a point $p_j$ belongs to the $i$th ring if, and only if,
+\[
+  \sqrt{\frac{i - 1}{n}} < d_j \le \sqrt{\frac{i}{n}},
+\]
+squaring both sides and multiplying by $n$, we have
+\[
+  i - 1 < d_j^2 \cdot n \le i
+\]
+which implies
+\[
+  i = \ceil{d_j^2 \cdot n}.
+\]
+
+\textbf{Proof for the radius of the $i$th ring.}
+
+Since the area of the unit circle is $\pi$ and each ring has equal area, for
+$i > 0$, we have
+\[
+  \pi r_i^2 - \pi r_{i - 1}^2 = \frac{\pi}{n},
+\]
+which implies
+\[
+  r_i = \sqrt{\frac{1}{n} + r^2_{i - 1}}.
+\]
+
+Note that
+\begin{equation*}
+\begin{aligned}
+  r_1 = \sqrt{\frac{1}{n} + 0^2} = \frac{\sqrt{1}}{\sqrt{n}},\\
+  r_2 = \sqrt{\frac{1}{n} + \left(\sqrt{\frac{1}{n}}\right)^2} = \frac{\sqrt{2}}{\sqrt{n}},\\
+  r_3 = \sqrt{\frac{1}{n} + \left(\sqrt{\frac{2}{n}}\right)^2} = \frac{\sqrt{3}}{\sqrt{n}},
+\end{aligned}
+\end{equation*}
+
+which lead us to assume that
+\[
+  r_i = \frac{\sqrt{i}}{\sqrt{n}},
+\]
+for $i = 0, 1, \dots, n$. We shall prove it by induction. Note that it holds for
+$i = 0$, since
+\[
+  r_0 = \frac{\sqrt{0}}{\sqrt{n}} = 0.
+\]
+To show that it holds for $i > 0$, we need to show that if it holds for $i$, it
+also holds for $i + 1$. We have
+\[
+  r_{i + 1} = \sqrt{\frac{1}{n} + \left(\sqrt{\frac{i}{n}}\right)^2}
+            = \sqrt{\frac{i + 1}{n}}
+            = \frac{\sqrt{i + 1}}{\sqrt{n}},
+\]
+which proves the inductive step.
+
+\end{framed}
+
+\item[8.4-5]{($\star$) A \textbf{\emph{probability distribution function}}
+$P(x)$ for a random variable $X$ is defined by $P(x) = \text{Pr}\{X \le x\}$.
+Suppose that we draw a list of $n$ random variables $X_1, X_2, \dots, X_n$ from
+a continuous probability distribution function $P$ that is computable in $O(1)$
+time. Give an algorithm that sorts these numbers in linear average-case time.}
+
+\begin{framed}
+Skipped.
 \end{framed}
 
 \end{enumerate}
