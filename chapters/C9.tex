@@ -1,0 +1,206 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage[table]{xcolor}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered]{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{interval}
+\usetikzlibrary{positioning,decorations.pathreplacing}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{CLRS {--} Chapter 9 {--} Medians and Order Statistics}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+
+%                       DEFINITIONS                         %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\tikzset{every tree node/.style={minimum width=1.95em,draw,circle,font=\footnotesize},
+         blank/.style={draw=none},
+         edge from parent/.style=
+         {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
+         level distance=1cm}
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\intervalconfig{soft open fences}
+
+\let\oldnl\nl% Store \nl in \oldnl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
+
+\tikzset{
+node of list/.style = {
+             draw,
+             fill=orange!20,
+             minimum height=4.5mm,
+             minimum width=4.5mm,
+             node distance=6mm
+   },
+link/.style = {
+     -stealth,
+     shorten >=1pt
+     },
+array element/.style = {
+    draw, fill=white,
+    minimum width = 7mm,
+    minimum height = 5mm
+  }
+}
+
+\def\LinkedList#1{%
+  \foreach \index/\element in \list {
+     \node[node of list, right = of aux, name=\index] {\element};
+     \node[node of list, name=aux2, anchor=west] at ([xshift=-.4pt] \index.east) {};
+     \draw[link] (aux) -- (\index);
+     \coordinate (aux) at (aux2);
+   }
+   \fill (aux) circle(2pt);
+}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+{\large Section 9.1 {--} Minimum and maximum}
+
+\begin{enumerate}
+
+\item[9.1{-}1]{Show that the second smallest of $n$ elements can be found with
+$n + \ceil{\lg n} - 2$ comparisons in the worst case. (\emph{Hint:} Also find
+the smallest element.)}
+
+\begin{framed}
+Lets find first the smallest element. Compare the elements in pairs and discard
+the largest element of each pair. The number of elements is now $\ceil{n/2}$.
+Repeat this operation recursively to the remaining elements until the smallest
+element is found. Since we discard one element in each comparison, the number of
+comparisons is the number of elements that is not the smaller.  Thus, $n - 1$
+comparisons. Note that the second smallest element can only be greater than the
+smallest element. Thus, the second smallest element is among these
+$\ceil{\lg n}$ elements that were discarded when compared to the smallest
+element. Use the same recursive approach on these $\ceil{\lg n}$ elements to
+find the second smallest with $\ceil{\lg n} - 1$ comparisons. The total number
+of comparisons in the worst-case is then $n - 1 + \ceil{\lg n}
+- 1 = n + \ceil{\lg n} - 2$.
+\end{framed}
+
+\item[9.1{-}2]{($\star$) Prove the lower bound of $\ceil{3n/2} - 2$ comparisons
+in the worst case to find both the maximum and minimum of $n$ numbers.
+(\emph{Hint:} Consider how many numbers are potentially either the maximum or
+minimum, and investigate how a comparison affects these counts.)}
+
+\begin{framed}
+At the start, any of the $n$ the elements can be both the minimum and the
+maximum. After the first comparison, we can discard the largest as not being the
+minimum and the smallest as not being the maximum. From now on we have two
+options: compare two different elements or compare one of the elements
+previously compared with a different element. The first option will decrease by
+one both the number of potential minimums and potential maximums, while the
+second option will only decrease one these totals. Thus, the best way to start
+is to group the elements in pairs and compare them, which requires $\floor{n/2}$
+comparisons. After comparing all the pairs, we will have $\ceil{n/2}$ potential
+maximums and $\ceil{n/2}$ potential minimums. In the worst-case, those sets are
+disjoint and must be treated independently. We know from the previous question
+that the minimum number of comparisons needed to find the minimum or the maximum
+among $\ceil{n/2}$ elements is $\ceil{n/2} - 1$. Thus, the lower bound to find
+both the maximum and the minimum of $n$ numbers is
+\[
+  \Bigl\lfloor \frac{n}{2} \Bigr\rfloor + 2 \left( \Bigl\lceil \frac{n}{2} \Bigr\rceil - 1 \right).
+\]
+
+If $n$ is even, we have
+\[
+  \Bigl\lfloor \frac{n}{2} \Bigr\rfloor + 2 \left( \Bigl\lceil \frac{n}{2} \Bigr\rceil - 1 \right)
+  = \frac{n}{2} + n - 2
+  = \frac{3n}{2} - 2
+  = \Bigl\lceil \frac{3n}{2} \Bigr\rceil - 2.
+\]
+
+If $n$ is odd, we have
+\[
+  \Bigl\lfloor \frac{n}{2} \Bigr\rfloor + 2 \left( \Bigl\lceil \frac{n}{2} \Bigr\rceil - 1 \right)
+  = \frac{n - 1}{2} + (n + 1) - 2
+  = \frac{3n - 3}{2}
+  = \Bigl\lceil \frac{3n}{2} \Bigr\rceil - 2.
+\]
+\end{framed}
+
+\end{enumerate}
+
+\end{document}
