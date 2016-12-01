@@ -1,6 +1,6 @@
 # CLRS Third Edition Solutions
 
-These are my personal solutions of the problems from Introdution to Algorithms,
+These are my personal solutions for the problems from Introdution to Algorithms,
 Third Edition.
 
 The compiled PDF is [available on my website](http://clrs.dmoraes.org).

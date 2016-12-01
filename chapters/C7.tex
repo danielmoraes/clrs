@@ -1,6 +1,6 @@
-\lhead{CLRS {--} Chapter 7 {--} Quicksort}
+\chapter{Quicksort}
 
-{\large Section 7.1 {--} Description of quicksort}
+\section{Description of quicksort}
 
 \begin{enumerate}
 
@@ -142,6 +142,8 @@ The \textbf{for} loop of lines $3{-}6$ iterates $n - 1$ times and each
 iteration does a constant amount of work. Thus, it is $O(n)$.
 \end{framed}
 
+\newpage
+
 \item[7.1{-}4]{How would you modify \textsc{Quicksort} to sort into
 nonincreasing order?}
 
@@ -160,7 +162,7 @@ to
 
 \newpage
 
-{\large Section 7.2 {--} Performance of quicksort}
+\section{Performance of quicksort}
 
 \begin{enumerate}
 
@@ -285,7 +287,7 @@ Thus, the probability of getting a more balanced split is
 
 \newpage
 
-{\large Section 7.3 {--} A randomized version of quicksort}
+\section{A randomized version of quicksort}
 
 \begin{enumerate}
 
@@ -324,17 +326,15 @@ of calls to \textsc{Partition} is $\floor{n/2} = \Theta(n)$.
 
 \newpage
 
-{\large Section 7.4 {--} Analysis of quicksort}
+\section{Analysis of quicksort}
 
 \begin{enumerate}
 
-\item[7.4{-}1]{Show that in the recurrence
+\item[7.4{-}1]{Show that $T(n) = \Omega(n^2)$ in the recurrence
 \[
-  T(n) = \max_{0 \le q \le n - 1}(T(q) + T(n - q - 1)) + \Theta(n),
+  T(n) = \max_{0 \le q \le n - 1}(T(q) + T(n - q - 1)) + \Theta(n).
 \]
-\[
-  T(n) = \Omega(n^2).
-\]}
+}
 
 \begin{framed}
 We guess that $T(n) \ge cn^2$ for some constant $c$. Substituting into the
@@ -540,7 +540,8 @@ The proof is similar for $1/2 \le \alpha < 1$ and the result is the same.
 
 \newpage
 
-{\large Problems}
+\section*{Problems}
+\addcontentsline{toc}{section}{\protect\numberline{}Problems}%
 
 \begin{enumerate}
 

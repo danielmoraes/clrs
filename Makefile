@@ -4,7 +4,7 @@ OBJS=$(patsubst %.tex,%,$(SRCS))
 all: $(OBJS) clean
 
 %: %.tex
-	pdflatex $< $@.pdf
+	rubber -d $<
 
 clean:
-	find . -type f -regex '\(.*log\|.*aux\)' -delete
+	find . -type f -regex '\(.*log\|.*aux\|.*toc\|.*out\)' -delete

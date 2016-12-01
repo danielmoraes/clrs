@@ -4,6 +4,8 @@
 % --------------------------------------------------------- %
 
 \usepackage[english]{babel}
+\usepackage{lipsum}
+\usepackage{titlesec}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{isolatin1}
@@ -24,6 +26,10 @@
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \usepackage{interval}
+\usepackage[pdfauthor={Daniel Bastos Moraes},
+            pdftitle={My Solutions to CLRS, Third Edition}]{hyperref}
+\hypersetup{pdftex,colorlinks=true,allcolors=blue}
+\usepackage{hypcap}
 \usetikzlibrary{positioning,decorations.pathreplacing}
 \usetikzlibrary{calc}
 
@@ -50,6 +56,7 @@
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
+\lhead{CLRS {--} \chaptername\ \thechapter\ {--} \leftmark}
 \rhead{Daniel Bastos Moraes}
 \cfoot{}
 \rfoot{\thepage}
@@ -57,11 +64,33 @@
 \renewcommand{\footrulewidth}{0.4pt}
 \newcommand{\Perp}{\perp\! \! \! \perp}
 
-
 %                       DEFINITIONS                         %
 % --------------------------------------------------------- %
 
 \setlength{\parindent}{0cm}
+
+\makeatletter
+\let\ps@plain\ps@fancy
+\makeatother
+
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+\makeatletter
+\def\@makechapterhead#1{%
+{\parindent \z@ \raggedright \normalfont         % No paragraph indent, ragged right
+  \interlinepenalty\@M                           % Penalty
+  \large \bfseries #1\par\nobreak                % Huge, bold chapter title
+  \vskip 10\p@                                   % Insert 10pt (vertical) space
+}}
+\makeatother
+
+\titleformat*{\section}{\large}
+
+\makeatletter
+\renewcommand\tableofcontents{%
+    \@starttoc{toc}%
+}
+\makeatother
 
 \makeatletter
 \renewenvironment{framed}{%
@@ -136,6 +165,22 @@ array element/.style = {
 
 \small
 
+{\pagestyle{empty}
+
+{\Large\bfseries Solutions to CLRS, Third Edition}
+
+\vspace{.5em}
+
+{\large\emph{Author: Daniel Bastos Moraes}}
+
+\vspace{2em}
+
+{\large\bfseries Table of Contents}
+
+\tableofcontents
+
+\cleardoublepage}
+
 \include{chapters/C1}
 \include{chapters/C2}
 \include{chapters/C3}
@@ -145,6 +190,7 @@ array element/.style = {
 \include{chapters/C7}
 \include{chapters/C8}
 \include{chapters/C9}
+\appendix
 \include{chapters/AA}
 \include{chapters/AB}
 \include{chapters/AC}
