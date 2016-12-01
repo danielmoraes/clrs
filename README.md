@@ -3,6 +3,8 @@
 These are my personal solutions of the problems from Introdution to Algorithms,
 Third Edition.
 
+The compiled PDF is [available on my website](http://clrs.dmoraes.org).
+
 ## Selected Topics
 
 ### Foundations

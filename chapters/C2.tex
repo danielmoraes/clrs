@@ -1,89 +1,4 @@
-\documentclass{report}
-
-%                       MAIN PACKAGES                       %
-% --------------------------------------------------------- %
-
-\usepackage[english,brazil,brazilian]{babel}
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{isolatin1}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{textcomp}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{soul}
-\usepackage{cancel}
-\usepackage{booktabs}
-\usepackage{multirow}
-\usepackage{framed}
-\usepackage{xcolor}
-\usepackage{algpseudocode}
-\usepackage{algorithm2e} %for psuedo code
-\usepackage{courier}
-\usepackage{mathtools}
-
-\usepackage{tikz}
-\usetikzlibrary{calc}
-
-%                         MARGINS                           %
-% --------------------------------------------------------- %
-
-\hoffset=-0.5in
-\voffset=-0.6in
-\oddsidemargin=0pt
-\topmargin=0pt
-\headheight=12pt
-\headsep=15pt
-\textheight=690pt
-\textwidth=543pt
-\marginparsep=11pt
-\marginparwidth=54pt
-\footskip=25pt
-\marginparpush=5pt
-\paperwidth=597pt
-\paperheight=845pt
-
-%                        PAGE STYLE                         %
-% --------------------------------------------------------- %
-
-\usepackage{fancyhdr}
-\pagestyle{fancy}
 \lhead{CLRS {--} Chapter 2 {--} Getting Started}
-\rhead{Daniel Bastos Moraes}
-\cfoot{}
-\rfoot{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-\newcommand{\Perp}{\perp\! \! \! \perp}
-
-%                       PROPERTIES                          %
-% --------------------------------------------------------- %
-
-\setlength{\parindent}{0cm}
-
-\makeatletter
-\renewenvironment{framed}{%
- \def\FrameCommand##1{\hskip\@totalleftmargin
- \fboxsep=\FrameSep\fbox{##1}}%
- \MakeFramed {\advance\hsize-\width
-   \@totalleftmargin\z@ \linewidth\hsize
-   \@setminipage}}%
- {\par\unskip\endMakeFramed}
-\makeatother
-
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
-
-\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
-\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
-
-%                        DOCUMENT                           %
-% --------------------------------------------------------- %
-
-\begin{document}
-
-\small
 
 {\large Section 2.1 {--} Insertion sort}
 
@@ -180,6 +95,8 @@ $A[i]$ corresponds to the $\nu$ element, its index is returned.
     the element $\nu$.
 \end{itemize}
 \end{framed}
+
+\newpage
 
 \item[2.1{-}4]{Consider the problem of adding two $n$-bit binary integers,
 stored in two $n$-element arrays $A$ and $B$. The sum of the two integers should
@@ -832,5 +749,3 @@ permutation on $n$ elements in $\Theta(n \lg n)$ worst-case time.
 \end{framed}
 
 \end{enumerate}
-
-\end{document}

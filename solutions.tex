@@ -1,0 +1,152 @@
+\documentclass{report}
+
+%                       MAIN PACKAGES                       %
+% --------------------------------------------------------- %
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{isolatin1}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage[table]{xcolor}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered]{algorithm2e} % for psuedo code
+\usepackage{courier}
+\usepackage{mathtools} % loads amsmath
+\usepackage{forest}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usepackage{interval}
+\usetikzlibrary{positioning,decorations.pathreplacing}
+\usetikzlibrary{calc}
+
+%                         MARGINS                           %
+% --------------------------------------------------------- %
+
+\hoffset=-0.5in
+\voffset=-0.6in
+\oddsidemargin=0pt
+\topmargin=0pt
+\headheight=12pt
+\headsep=15pt
+\textheight=690pt
+\textwidth=543pt
+\marginparsep=11pt
+\marginparwidth=54pt
+\footskip=25pt
+\marginparpush=5pt
+\paperwidth=597pt
+\paperheight=845pt
+
+%                        PAGE STYLE                         %
+% --------------------------------------------------------- %
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\rhead{Daniel Bastos Moraes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\Perp}{\perp\! \! \! \perp}
+
+
+%                       DEFINITIONS                         %
+% --------------------------------------------------------- %
+
+\setlength{\parindent}{0cm}
+
+\makeatletter
+\renewenvironment{framed}{%
+ \def\FrameCommand##1{\hskip\@totalleftmargin
+ \fboxsep=\FrameSep\fbox{##1}}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed}
+\makeatother
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\Exists}{\exists}
+\DeclareMathOperator{\Forall}{\forall}
+
+\def\figuredirectory{images}
+
+\mathchardef\mhyphen="2D % Define a "math hyphen"
+
+\tikzset{every tree node/.style={minimum width=1.95em,draw,circle,font=\footnotesize},
+         blank/.style={draw=none},
+         edge from parent/.style=
+         {draw, edge from parent path={(\tikzparentnode) -- (\tikzchildnode)}},
+         level distance=1cm}
+
+\DeclareMathOperator{\di}{d\!}
+\newcommand*\Eval[3]{\left.#1\right\rvert_{#2}^{#3}}
+
+\intervalconfig{soft open fences}
+
+\let\oldnl\nl% Store \nl in \oldnl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
+
+\tikzset{
+node of list/.style = {
+             draw,
+             fill=orange!20,
+             minimum height=4.5mm,
+             minimum width=4.5mm,
+             node distance=6mm
+   },
+link/.style = {
+     -stealth,
+     shorten >=1pt
+     },
+array element/.style = {
+    draw, fill=white,
+    minimum width = 7mm,
+    minimum height = 5mm
+  }
+}
+
+\def\LinkedList#1{%
+  \foreach \index/\element in \list {
+     \node[node of list, right = of aux, name=\index] {\element};
+     \node[node of list, name=aux2, anchor=west] at ([xshift=-.4pt] \index.east) {};
+     \draw[link] (aux) -- (\index);
+     \coordinate (aux) at (aux2);
+   }
+   \fill (aux) circle(2pt);
+}
+
+%                        DOCUMENT                           %
+% --------------------------------------------------------- %
+
+\begin{document}
+
+\small
+
+\include{chapters/C1}
+\include{chapters/C2}
+\include{chapters/C3}
+\include{chapters/C4}
+\include{chapters/C5}
+\include{chapters/C6}
+\include{chapters/C7}
+\include{chapters/C8}
+\include{chapters/C9}
+\include{chapters/AA}
+\include{chapters/AB}
+\include{chapters/AC}
+
+\end{document}

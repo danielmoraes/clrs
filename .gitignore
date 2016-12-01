@@ -1,5 +1,4 @@
 drafts
-*.log
-*.aux
 *.html
+*.pdf
 *.sh
