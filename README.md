@@ -58,7 +58,7 @@ The compiled PDF is [available on my website](http://clrs.dmoraes.org).
     *  Problems — 7 pr — **done**
 * *Medians and Order Statistics* (9.1-9.3)
     * Minimum and maximum — 2 pr — 1 starred — **done**
-    * Selection in expected linear time — 4 pr
+    * Selection in expected linear time — 4 pr — **done**
     * Selection in worst-case linear time — 9 pr — 1 starred
     *  Problems — 4 pr
 

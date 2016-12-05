@@ -1,10 +1,16 @@
-SRCS=$(wildcard *.tex)
-OBJS=$(patsubst %.tex,%,$(SRCS))
+SRC="solutions.tex"
 
-all: $(OBJS) clean
+all: release
 
-%: %.tex
-	rubber -d $<
+release: rubber clean
+
+debug: pdflatex clean
+
+rubber:
+	rubber -d $(SRC)
+
+pdflatex:
+	pdflatex $(SRC)
 
 clean:
 	find . -type f -regex '\(.*log\|.*aux\|.*toc\|.*out\)' -delete

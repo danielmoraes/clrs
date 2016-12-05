@@ -65,3 +65,72 @@ If $n$ is odd, we have
 \end{framed}
 
 \end{enumerate}
+
+\newpage
+
+\section{Selection in worst-case linear time}
+
+\begin{enumerate}
+
+\item[9.2-1]{Show that \textsc{Randomized-Select} never makes a recursive call
+to a 0-length array.}
+
+\begin{framed}
+At the start of each recursive call, a random pivot is chosen. If it happens to
+be the $i$th element, the element being searched has been found and is returned
+without any additional recursion call. Otherwise, the $i$th element is either
+before or after the pivot and a recursive call is made on the side of the
+subarray that includes the $i$th element.
+\end{framed}
+
+\item[9.2-2]{Argue that the indicator random vartiable $X_k$ and the value
+$T(\max(k - 1, n - k))$ are independent.}
+
+\begin{framed}
+Both $X_k$ and $T(\max(k - 1, n - k))$ depends on the value of $k$. However, no
+matter if $X_k$ is 0 or 1, the value of $T(\max(k - 1, n - k))$ is the same.
+\end{framed}
+
+\item[9.2-3]{Write an iterative version of \textsc{Randomized-Select}.}
+
+\begin{framed}
+The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Randomized-Select-Iterative}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r, i}}{%
+  \If{$p == r$}{%
+    \Return{$A[p]$}\;
+  }
+  \While{\texttt{\upshape{True}}}{%
+    $q = \texttt{Randomized-Partition}(A, p, r)$\;
+    $k = q - p + 1$\;
+    \If{$i == k$}{%
+      \Return{$A[q]$}\;
+    }
+    \ElseIf{$i < k$}{%
+      $r = q - 1$\;
+    }
+    \Else{%
+      $p = q + 1$\;
+      $i = i - k$\;
+    }
+  }
+}
+\end{algorithm}
+\end{framed}
+
+\item[9.2-4]{Suppose we use \textsc{Randomized-Select} to select the minimum
+element of the array $A = \langle 3, 2, 9, 0, 7, 5, 4, 8, 6, 1 \rangle$.
+Describe a sequence of partitions that results in a worst-case performance of
+\textsc{Randomized-Select}.}
+
+\begin{framed}
+The worst-case occurs when the pivot is always the greatest element. The number
+of calls to partition in this case is $n - 1$.
+\end{framed}
+
+\end{enumerate}
