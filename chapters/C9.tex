@@ -35,14 +35,15 @@ minimum and the smallest as not being the maximum. From now on we have two
 options: compare two different elements or compare one of the elements
 previously compared with a different element. The first option will decrease by
 one both the number of potential minimums and potential maximums, while the
-second option will only decrease one these totals. Thus, the best way to start
-is to group the elements in pairs and compare them, which requires $\floor{n/2}$
-comparisons. After comparing all the pairs, we will have $\ceil{n/2}$ potential
-maximums and $\ceil{n/2}$ potential minimums. In the worst-case, those sets are
-disjoint and must be treated independently. We know from the previous question
-that the minimum number of comparisons needed to find the minimum or the maximum
-among $\ceil{n/2}$ elements is $\ceil{n/2} - 1$. Thus, the lower bound to find
-both the maximum and the minimum of $n$ numbers is
+second option will only decrease one of these totals. Thus, the best way to
+start is to group the elements in pairs and compare them, which requires
+$\floor{n/2}$ comparisons. After comparing all the pairs, we will have
+$\ceil{n/2}$ potential maximums and $\ceil{n/2}$ potential minimums. In the
+worst-case, those sets are disjoint and must be treated independently. We know
+from the previous question that the minimum number of comparisons needed to find
+the minimum or the maximum among $\ceil{n/2}$ elements is $\ceil{n/2} - 1$.
+Thus, the lower bound to find both the maximum and the minimum of $n$ numbers in
+the worst-case is
 \[
   \Bigl\lfloor \frac{n}{2} \Bigr\rfloor + 2 \left( \Bigl\lceil \frac{n}{2} \Bigr\rceil - 1 \right).
 \]
@@ -131,6 +132,353 @@ Describe a sequence of partitions that results in a worst-case performance of
 \begin{framed}
 The worst-case occurs when the pivot is always the greatest element. The number
 of calls to partition in this case is $n - 1$.
+\end{framed}
+
+\end{enumerate}
+
+\newpage
+
+\section{Selection in worst-case linear time}
+
+\begin{enumerate}
+
+\item[9.3-1]{In the algorithm \textsc{Select}, the input elements are divided
+into groups of 5. Will the algorithm work in linear time if they are divided
+into groups of 7? Argue that \textsc{Select} does not run in linear time if
+groups of 3 are used.}
+
+\begin{framed}
+If the elements are divided into groups of 7, the number of elements
+greater/smaller than the median-of-medians is at least
+\[
+  7 \left( \Bigl\lceil \frac{1}{2} \Bigl\lceil \frac{n}{7} \Bigr\rceil \Bigr\rceil - 2 \right)
+  \ge \frac{4n}{14} - 8 = \frac{2n}{7} - 8,
+\]
+which implies that, in the worst-case, step 5 calls \textsc{Select} recursively
+on at most
+\[
+  n - \left( \frac{2n}{7} - 8 \right) = \frac{5n}{7} + 8
+\]
+elements. We then have the recurrence
+\[
+  T(n) = T\left( \Bigl\lceil \frac{n}{7} \Bigr\rceil \right) + T\left( \frac{5n}{7} + 8 \right) + O(n).
+\]
+
+We shall prove that its running time is linear by substitution. More
+specifically, we will show that
+\[
+    T(n) \le cn \; \Forall n \ge n_0,
+\]
+where $c$ and $n_0$ are positive constants. Substituting into the recurrence,
+yields
+\begin{equation*}
+\begin{aligned}
+  T(n) &\le c \Bigl\lceil \frac{n}{7} \Bigr\rceil + c \left( \frac{5n}{7} + 8 \right) + an\\
+       &\le c \frac{n}{7} + c + c \frac{5n}{7} + 8c + an & \text{($c \ge 1$)}\\
+       &=   \frac{6}{7} cn + 9c + an\\
+       &=   cn + \left( - \frac{1}{7} cn + 9c + an \right)\\
+       &\le cn,
+\end{aligned}
+\end{equation*}
+where the last step holds for
+\[
+  -\frac{1}{7} cn + 9c + an \le 0 \rightarrow c \ge 7a \left(\frac{n}{n - 63}\right),
+\]
+and picking $n_0 = 126$, it holds for $c \ge 14a$.
+
+Similarly, with groups of 3, the number of elements greater/smaller than the
+median-of-medians is at least
+\[
+  2 \left( \Bigl\lceil \frac{1}{2} \Bigl\lceil \frac{n}{3} \Bigr\rceil \Bigr\rceil - 2 \right)
+  \ge \frac{n}{3} - 4.
+\]
+which implies that, in the worst-case, step 5 calls \textsc{Select} recursively
+on at most
+\[
+  n - \left( \frac{n}{3} - 4 \right) = \frac{2n}{3} + 4
+\]
+elements. We then have the recurrence
+\[
+  T(n) = T\left( \Bigl\lceil \frac{n}{3} \Bigr\rceil \right) + T\left( \frac{2n}{3} + 4 \right) + O(n).
+\]
+
+We shall prove that its running time is $\omega(n)$ by substitution. More
+specifically, we will show that
+\[
+  T(n) > cn + d \; \Forall n \ge n_0,
+\]
+where $c$, $d$, and $n_0$ are positive constants. Substituting into the
+recurrence, yields
+\begin{equation*}
+\begin{aligned}
+  T(n) &> c \Bigl\lceil \frac{n}{3} \Bigr\rceil + d + c \left( \frac{2n}{3} + 4 \right) + d + an\\
+       &> c \frac{n}{3} + c + d + c \frac{2n}{3} + 4c + d + an & \text{($c \ge 1$)}\\
+       &= cn + 5c + 2d + an\\
+       &> cn,\\
+\end{aligned}
+\end{equation*}
+where the last step holds for $5c + 2d + an > 0$.
+\end{framed}
+
+\item[9.3-2]{Analyze \textsc{Select} to show that if $n \ge 140$, then at least
+$\ceil{n/4}$ elements are greater than the median-of-medians $x$ and at least
+$\ceil{n/4}$ elements are less than $x$.}
+
+\begin{framed}
+We have that at least
+\[
+  \frac{3n}{10} - 6
+\]
+elements are greater/smaller than $x$. To this number be equal to or greater
+than $\ceil{n/4}$, we find $n$ such that
+\begin{equation*}
+\begin{aligned}
+  \frac{3n}{10} - 6 \ge \Bigl\lceil \frac{n}{4} \Bigr\rceil
+  &\rightarrow \frac{3n}{10} - 6 \ge \frac{n}{4} + 1\\
+  &\rightarrow \frac{6n - 5n}{20} \ge 7\\
+  &\rightarrow \frac{n}{20} \ge 7\\
+  &\rightarrow n \ge 140.
+\end{aligned}
+\end{equation*}
+\end{framed}
+
+\item[9.3-3]{Show how quicksort can be made to run in $O(n \lg n)$ time in the
+worst-case, assuming that all elements are distinct.}
+
+\begin{framed}
+Update the partition procedure to use the median as the pivot. It will take an
+additional $O(n)$-time to find the median with the \textsc{Select} procedure,
+but the running time of partition will still be linear. We will then have the
+recurrence
+\[
+  T(n) = 2T \left( \frac{n}{2} \right) + O(n),
+\]
+which takes
+\[
+  \sum_{i = 0}^{\lg n} 2^i \cdot \frac{n}{2^i} = \sum_{i = 0}^{\lg n} n = O(n \lg n).
+\]
+\end{framed}
+
+\item[9.3-4]{($\star$) Suppose that an algorithm uses only comparisons to find
+the $i$th smallest element in a set of $n$ elements. Show that it can also find
+the $i - 1$ smaller elements and the $n - i$ larger elements without performing
+any additional comparisons.}
+
+\begin{framed}
+Assume without loss of generality that the elements of the array are distinct.
+Let $x$ denote the $i$th order statistic that was found through comparisons.
+First note that if there exists an element $y$ that was never compared to any
+other element, its value was not taken into account to determine $x$, which
+implies that there are at least two possible order statistics for $x$ {--} one
+for $y < x$ and another for $y > x$. The same occurs if $y$ is only compared to
+elements that are not between $x$ and $y$ in the sorted order. Note that these
+comparisons are insufficient to determine if $y$ is smaller or greater than $x$,
+and there will also be at least two possible order statistics for $x$.
+Therefore, to find $x$, the algorithm must compare $y$ to $x$ directly or by
+transitivity. These comparisons are sufficient to determine the relative order
+of every element with respect to $x$, and therefore to also determine the
+$i - 1$ smaller and the $n - i$ greater elements of the array.
+\end{framed}
+
+\newpage
+
+\item[9.3-5]{Suppose that you have a ``black-box'' worst-case linear-time median
+subroutine. Give a simple, linear-time algorithm that solves the selection
+problem for an arbitrary order statistic.}
+
+\begin{framed}
+A simple algorithm works as follows:
+\begin{enumerate}
+\item Find the lower median $m$ using the ``black-box'' median subroutine.
+\item If $i = \ceil{n/2}$, just return $m$. Otherwise, partition the array using
+$m$ as the pivot and recursively find the $i$th element on the first
+$\ceil{n / 2} - 1$ elements if $i < \ceil{n / 2}$, or the $(i - \ceil{n / 2})$th
+element on the last $\floor{n/2}$ elements if $i > \ceil{n/2}$.
+\end{enumerate}
+
+This algorithm has the recurrence
+\[
+  T(n) = T(n/2) + O(n),
+\]
+which can be solved using case 3 of the master method, since $n^{\lg 1}$ is
+polynomially smaller than $f(n)$. Thus, $T(n) = \Theta(n)$.
+
+The pseudocode of this algorithm is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{Select'}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, p, r, i}}{%
+  $m = \texttt{Median}(A, p, r)$\;
+  $k = \ceil{n/2}$\;
+  \If{$i == k$}{%
+    \Return{$m$}\;
+  }
+  \Else{%
+    $q = \texttt{Partition}(A, p, r, m)$\;
+    \If{$i < k$}{%
+      // recurve over the first $\ceil{n/2} - 1$ elements\;
+      $\texttt{Select'}(A, p, p + k - 2, i)$\;
+    }
+    \Else{%
+      // recurve over the last $\floor{n/2}$ elements\;
+      $\texttt{Select'}(A, p + k, r, i - k)$\;
+    }
+  }
+}
+\end{algorithm}
+
+\end{framed}
+
+\newpage
+
+\item[9.3-6]{The $k$th \textbf{\emph{quantiles}} of an $n$-element set are the
+$k - 1$ order statistics that divide the sorted set into $k$ equal-sized sets
+(to within 1). Give an $O(n \lg k)$-time algorithm to list the $k$th quantiles
+of a set.}
+
+\begin{framed}
+Let $S$ be an $n$-set and $S_{(i)}$ denote the $i$th order statistic of $S$. The
+$k$th quantiles of $S$ are the elements
+\[
+  S_{(1 (n / k))}, S_{(2 (n / k))}, \dots, S_{((k - 1) (n / k))}.
+\]
+An efficient algorithm to find the above elements work as follows:
+\begin{enumerate}
+\item If $k = 1$, then return $\emptyset$.
+\item Otherwise, do the following:
+\begin{enumerate}
+\item Partition $S$ around the element $S_{(\floor{k / 2} (n / k))}$. Let $q$
+denote the position of the pivot after partition and let $S_1$ and $S_2$ denote
+the subsets $S[1, \dots, q]$ and $S[q + 1, \dots, n]$, respectively.
+\item Recursively solve the $(\floor{k/2})$th quantiles of $S_1$ and the
+$(\ceil{k/2})$ quantiles of $S_2$. Let $Q_1$ and $Q_2$ denote the solutions of
+$S_1$ and $S_2$, respectively.
+\item Return $Q_1 \cup \{S[q]\} \cup Q_2$.
+\end{enumerate}
+\end{enumerate}
+
+We shall now prove that this algorithm runs in $O(n \lg k)$. First note that
+since
+\[
+  n \text{ mod } k = 0,
+\]
+$k$ is even implies that $n$ is also even. Thus, for even $k$, we have
+\begin{equation*}
+\begin{aligned}
+  \Bigl\lfloor \frac{k}{2} \Bigr\rfloor \cdot \frac{n}{k}
+  &= \frac{k}{2} \cdot \frac{n}{k}\\
+  &= \frac{n}{2}\\
+  &= \Bigl\lfloor \frac{n}{2} \Bigr\rfloor,
+\end{aligned}
+\end{equation*}
+which implies that $q$ is the lower median. When $k$ is odd, we have
+\begin{equation*}
+\begin{aligned}
+  \Bigl\lfloor \frac{k}{2} \Bigr\rfloor \cdot \frac{n}{k}
+  &=   \frac{k - 1}{2} \cdot \frac{n}{k}\\
+  &=   \left( \frac{k}{2} - \frac{1}{2} \right) \frac{n}{k}\\
+  &=   \frac{n}{2} - \frac{n}{2k}.
+\end{aligned}
+\end{equation*}
+Step (a) takes $O(1)$. Step (b) has the recurrence
+\begin{equation*}
+T(n, k) =
+\begin{cases}
+  O(1), & k = 1\\
+  T\left( \Bigl\lfloor \frac{n}{2} \Bigr\rfloor, \Bigl\lfloor \frac{k}{2} \Bigr\rfloor \right) +
+  T\left( \Bigl\lceil \frac{n}{2} \Bigr\rceil, \Bigl\lceil \frac{k}{2} \Bigr\rceil \right) +
+  O(n), & \text{$k > 1$ and $k$ is even}\\
+  T\left( \frac{n}{2} - \frac{n}{2k}, \Bigl\lfloor \frac{k}{2} \Bigr\rfloor \right) +
+  T\left( \frac{n}{2} + \frac{n}{2k}, \Bigl\lceil \frac{k}{2} \Bigr\rceil \right) +
+  O(n), & \text{$k > 1$ and $k$ is odd}
+\end{cases}
+\end{equation*}
+
+We shall solve this recurrence through the analysis of its recursion-tree. Since
+the problem is always divided into two subproblems, without overlap, the total
+cost over all nodes at depth $i$ is $cn$. The bottom level at depth $\lg k$
+has $2^{\lg k} = k$ nodes, each contributing cost $O(1)$, for a total cost of
+$O(k)$. Thus, the cost of the entire tree is \begin{equation*}
+\begin{aligned}
+  T(n, k) &= \sum_{i = 0}^{\lg k - 1} cn + O(k)\\
+          &= cn \lg k + O(k)\\
+          &= O(n \lg k).
+\end{aligned}
+\end{equation*}
+
+\end{framed}
+
+\newpage
+
+\item[9.3-7]{Describe an $O(n)$-time algorithm that, given a set $S$ of $n$
+distinct numbers and a positive integer $k \le n$, determines the $k$ numbers in
+$S$ that are closest to the median of $S$.}
+
+\begin{framed}
+Let $A$ be an array of size $n$. The following algorithm finds $k$ elements of
+$A$ such that every element
+\begin{itemize}
+\item is greater than or equal to the $(\floor{n/2} - \floor{(k - 1)/2})$th
+  order statistic of $A$, and
+\item is lower than or equal to the $(\floor{n/2} + \ceil{(k - 1)/2})$th order
+  statistic of $A$.
+\end{itemize}
+
+Do the following steps:
+\begin{enumerate}
+\item Find the $q$th order statistic of $A$, such that
+$q = \floor{n/2} - \floor{(k - 1)/2}$, and partition $A$ around this element.
+\item If $k = 1$, return $A[q]$.
+\item Otherwise, do the following:
+\begin{enumerate}
+\item Let $A'$ denote subarray $A[q, \dots, n]$.
+\item Find the $k$th order statistic of $A'$ and partition $A'$ around this
+element.
+\item Return the subarray $A'[q, \dots, q + k - 1]$.
+\end{enumerate}
+\end{enumerate}
+
+The algorithm do at most two selections and two partitions. Thus, its running
+time is $4 \cdot O(n) + O(1) = O(n)$.
+\end{framed}
+
+\item[9.3-8]{Let $X[1 \dots n]$ and $Y[1 \dots n]$ be two arrays, each
+containing $n$ numbers already in sorted order. Give an $O(\lg n)$-time algorithm
+to find the median of all $2n$ elements in arrays $X$ and $Y$.}
+
+\begin{framed}
+Note that, since both arrays are sorted, the order statistic of $X[i]$ is
+$\floor{(n + 1)/2}$ (the median) if, and only if,
+\[
+  X[i] \ge Y\left[ \Bigl\lfloor \frac{n + 1}{2} \Bigr\rfloor - i \right],
+\]
+and
+\[
+  X[i] \le Y\left[ \Bigl\lfloor \frac{n + 1}{2} \Bigr\rfloor - i + 1 \right].
+\]
+
+Start testing the median of $X$. If the first comparison fails, recurse over the
+right half. If the second comparison fails, recurse over the left half.
+Otherwise, return $X[i]$. If a recursion is performed on an empty array, the
+median is not within $X$. Repeat a similar procedure on $Y$ to find the median.
+The complexity of this algorithm is $O(\lg n) + O(\lg n) = O(\lg n)$.
+\end{framed}
+
+\item[9.3-9]{Professor Olay is consulting for an oil company, which is planning
+a large pipeline running east to west through an oil field of $n$ wells. The
+company wants to connect a spur pipeline from each well directly to the main
+pipeline along a shortest route (either north or south), as shown in Figure 9.2.
+Given the $x$- and $y$-coordinates of the wells, how should the professor pick
+the optimal location of the main pipeline, which would be the one that minimizes
+the total length of the spurs? Show how to determine the optimal location in
+linear time.}
+
+\begin{framed}
+The optimal locations are the lower and upper medians of the $y$ values. Find
+one of them with the \textsc{Select} algorithm.
 \end{framed}
 
 \end{enumerate}
