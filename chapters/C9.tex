@@ -482,3 +482,354 @@ one of them with the \textsc{Select} algorithm.
 \end{framed}
 
 \end{enumerate}
+
+\newpage
+
+\section*{Problems}
+\addcontentsline{toc}{section}{\protect\numberline{}Problems}%
+
+\begin{enumerate}
+
+\item[9-1]{\textbf{\emph{Largest i numbers in sorted order}}\\
+Given a set of $n$ numbers, we wish to find the $i$ largest in sorted order
+using a comparison-based algorithm. Find the algorithm that implements each of
+the following methods with the best asymptotic worst-case running time, and
+analyze the running times of the algorithms in terms of $n$ and $i$.
+
+\begin{enumerate}
+  \item[\textbf{a.}] Sort the numbers, and list the $i$ largest.
+  \item[\textbf{b.}] Build a max-priority queue from the numbers, and call \textsc{Extract-Max} $i$ times.
+  \item[\textbf{c.}] Use an order-statistic algorithm to find the $i$th largest number,
+    partition around that number, and sort the $i$ largest numbers.
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{LargestNumbersSort}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, i}}{%
+  Let $B$ be an integer array of size $i$\;
+  \texttt{Heapsort}($A, 1, A.length$)\;
+  \For{$j = 1$ \KwTo $i$}{%
+    $B[j] = A[j]$\;
+  }
+  \Return{$B$}\;
+}
+\end{algorithm}
+
+    This algorithm runs in $\Theta(n \lg n + i) = \Theta(n \lg n)$.
+
+\item The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{LargestNumbersPriorityQueue}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, i}}{%
+  Let $B$ be an integer array of size $i$\;
+  \texttt{Build-Max-Heap}($A$)\;
+  \For{$j = 1$ \KwTo $i$}{%
+    $\text{\emph{element}}$ = \texttt{Heap-Extract-Max}($A$)\;
+    $B[i - j + 1] = element$\;
+  }
+  \Return{$B$}\;
+}
+\end{algorithm}
+
+\textsc{Build-Max-Heap} call takes $O(n)$, \textsc{Extract-Max} call takes
+$O(\lg n)$. This algorithm runs in $O(n + i \lg n)$.
+
+\item The pseudocode is stated below.
+
+\begin{algorithm}[H]
+\SetAlgoNoEnd\DontPrintSemicolon
+\BlankLine
+\SetKwFunction{algo}{LargestNumbersOrderStatistic}
+\SetKwProg{myalg}{}{}{}
+\nonl\myalg{\algo{A, i}}{%
+  Let $B$ be an integer array of size $i$\;
+  $q = \texttt{Select}(A, i)$\;
+  \texttt{Partition}($A, 1, A.length, q$)\;
+  \texttt{Heapsort}($A, 1, i$)\;
+  \For{$j = 1$ \KwTo $i$}{%
+    $B[j] = A[j]$\;
+  }
+  \Return{$B$}\;
+}
+\end{algorithm}
+
+\textsc{Select} call takes $O(n)$, \textsc{Partition} call takes $O(n)$,
+\textsc{Quicksort} call takes $O(i \lg i)$. This algorithm runs in $O(n + i \lg i)$.
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[9-2]{\textbf{\emph{Weighted median}}\\
+For $n$ distinct elements $x_1, x_2, \dots, x_n$ with positive weights
+$w_1, w_2, \dots, w_n$ such that $\sum_{i = 1}^{n} w_i = 1$, the
+\textbf{\emph{weighted (lower) median}} is the element $x_k$ satisfying
+\[
+  \sum_{x_i < x_k} w_i < \frac{1}{2},
+\]
+and
+\[
+  \sum_{x_i > x_k} w_i \le \frac{1}{2}.
+\]
+
+For example, if the elements are 0.1, 0.35, 0.05, 0.1, 0.15, 0.05, 0.2 and each
+element equals its weight (that is, $w_i = x$ for $i = 1, 2, \dots, 7$), the
+median is 0.1, but the weighted median is 0.2.
+
+\begin{enumerate}
+\item[\textbf{a.}] Argue that the median of $x_1, x_2, \dots, x_n$ is the
+weighted median of the $x_i$ with weights $w_i = 1/n$ for $1, 2, \dots, n$.
+\item[\textbf{b.}] Show how to compute the weighted median of $n$ elements in
+$O(n \lg n)$ worst-case time using sorting.
+\item[\textbf{c.}] Show how to compute the weighted median in $\Theta(n)$
+worst-case time using a linear-time median algorithm such as \textsc{Select}
+from Section 9.3.
+\end{enumerate}
+
+The \textbf{\emph{post-office location problem}} is defined as follows. We are
+given $n$ points $p_1, p_2, \dots, p_n$ with associated weights
+$w_1, w_2, \dots, w_n$. We wish to find a point $p$ (not necessarily one of the
+input points) that minimizes the sum $\sum_{i = 1}^n w_i d(p, p_i)$, where
+$d(a, b)$ is the distance between points $a$ and $b$.
+
+\begin{enumerate}
+\item[\textbf{d.}] Argue that the weighted median is a best solution for the
+1-dimensional post-office location problem, in which points are simply real
+numbers and the distance between points $a$ and $b$ is $d(a, b) = |a - b|$.
+
+\item[\textbf{e.}] Find the best solution for the 2-dimensional post-office
+location problem, in which the points are $(x, y)$ coordinate pairs and the
+distance between points $a = (x_1, y_1)$ and $b = (x_2, y_2)$ is the
+\textbf{\emph{Manhattan distance}} given by
+$d(a, b) = |x_1 - x_2| + |y_1 - y_2|$.
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item Note that there are at most $\floor{(n - 1)/2}$ elements that are smaller
+than the median and at most $\ceil{(n - 1)/2}$ elements that are greater than
+the median. Since the weight of each element is $1/n$, we have
+\[
+  \sum_{x_i < x_k} w_i = \sum_{x_i < x_k} \frac{1}{n}
+    = \frac{1}{n} \sum_{x_i < x_k} 1
+    \le \frac{1}{n} \cdot \Bigl\lfloor \frac{n - 1}{2} \Bigr\rfloor
+    < \frac{1}{n} \cdot \frac{n}{2} = \frac{1}{2},
+\]
+and
+\[
+  \sum_{x_i < x_k} w_i = \sum_{x_i < x_k} \frac{1}{n}
+  = \frac{1}{n} \sum_{x_i < x_k} 1
+  \le \frac{1}{n} \cdot \Bigl\lceil \frac{n - 1}{2} \Bigr\rceil
+  \le \frac{1}{n} \cdot \frac{n}{2} = \frac{1}{2},
+\]
+which implies that the median is also the weighted median.
+
+\item Sort the array with \textsc{Heapsort}. Iterate over the elements of the
+array, accumulating the sum of their weights until the sum achieves a value that
+is greater than or equal to $1/2$. Let $x_k$ denote the last element that made
+the sum accumulate a value greater than or equal to $1/2$. Note that at that
+point
+\[
+  \sum_{x_i < x_k} w_i < \frac{1}{2}
+\]
+holds since the sum of the weights until the element right before $x_k$ is
+smaller than $1/2$ and
+\[
+  \sum_{x_i > x_k} w_i \le \frac{1}{2}
+\]
+holds since the sum of the weights until $x_k$ is greater than or equal to $1/2$
+and $\sum_{i = 1}^{n} w_i = 1$. Thus, $x_k$ is the weighted median. This
+algorithm takes $\Theta(n \lg n)$ to sort the array with \textsc{Heapsort} and
+$O(n)$ to accumulate the weights and find the weighted median.
+
+\item Do the following steps:
+\begin{enumerate}
+\item Find the median with the \textsc{Select} algorithm.
+\item Partition the array around the median.
+\item Let $x_m$ denote the position of the median after partitioning. Let
+$W_L = \sum_{X_i < X_m} w_i$ and $W_R = \sum_{x_i > x_m} w_i$.
+\item If $W_L < 1/2$ and $W_R \le 1/2$, $x_m$ is the weighted median. Otherwise,
+do the following:
+\begin{enumerate}
+\item If $W_L \ge 1/2$, the weighted median is before $x_m$.
+Set $w_m = w_m + W_R$ and recurse on the left half of the array, including
+$x_m$.
+\item If $W_R > 1/2$, the weighted median is after $x_m$. Set $w_m = w_m + W_L$
+and recurse on the right half of the array, including $x_m$.
+\end{enumerate}
+\end{enumerate}
+
+This algorithm has the recurrence:
+\[
+  T(n) = T\left(\frac{n}{n} + 1\right) + \Theta(n)
+       = \sum_{i = 0}^{\lg n} \left(\frac{n}{2^i} + 1\right)
+       = n \sum_{i = 0}^{\lg n} \frac{1}{2^i} + \sum_{i = 0}^{\lg n} 1
+       \le 2n + \lg n + 1
+       = \Theta(n).
+\]
+
+\item Skipped.
+
+\item Skipped.
+
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[9-3]{\textbf{\emph{Small order statistics}}\\
+We showed that the worst-case number $T(n)$ of comparisons used by
+\textsc{Select} to select the ith order statistic from $n$ numbers satisfies
+$T(n) = \Theta(n)$, but the constant hidden by the $\Theta$-notation is rather
+large. When $i$ is small relative to $n$, we can implement a different procedure
+that uses \textsc{Select} as a subroutine but makes fewer comparisons in the
+worst case.
+
+\begin{enumerate}
+\item[\textbf{a.}] Describe an algorithm that uses $U_i(n)$ comparisons to
+find the $i$th smallest of $n$ elements, where
+\[
+U_i(n) =
+\begin{cases}
+  T(n) & \text{if } i \ge n/2,\\
+  \floor{n/2} + U_i(\ceil{n/2}) + T(2i) & \text{otherwise}.
+\end{cases}
+\]
+
+(\emph{Hint:} Begin with $\floor{n/2}$ disjoint pairwise comparisons, and
+recurse on the set containing the smaller element from each pair.)
+
+\item[\textbf{b.}] Show that, if $i < n/2$, then $U_i(n) = n + O(T(2i) \lg (n/i))$.
+
+\item[\textbf{c.}] Show that if $i$ is a constant less than $n/2$, then $U_i(n) = n + O(\lg n)$.
+
+\item[\textbf{d.}] Show that if $i = n/k$ for $k \ge 2$, then $U_i(n) = n + O(T(2n/k) \lg k)$.
+\end{enumerate}
+}
+
+\begin{framed}
+\begin{enumerate}
+\item First, note that the \textsc{Select} algorithm find the $i$th element by
+partitioning the array. That is, when the $i$th element is found, the first $i$
+elements are the $i$ smallest. However, when $n$ is too large with respect to
+$i$, it perform more comparisons than necessary. Taking the hint that the
+question gave us, we can reduce the number of comparisons when $n$ is too large
+by running \textsc{Select} only when $n$ is smaller than or equal to $2i$.
+
+The key insight to solve the question is to observe that if we first make
+disjoint pairwise comparisons and then run \textsc{Select} only among the
+smallest element of each pair, the $i$th order statistic of the whole array is
+among the $i$ smallest elements that were found by \textsc{Select} and their
+large counterparts on the right half of the array. This occurs because the
+remaining elements on the left half are larger than at least $i$ elements and
+their larger counterparts on the right half are even larger.
+
+We can then use this notion to build a recursive algorithm that solves the
+selection problem with fewer comparisons, using the \textsc{Select} algorithm
+only when $n$ is small enough:
+\begin{enumerate}
+  \item If $i \ge n/2$, run \textsc{Select} and return its result.
+  \item Otherwise, do the following:
+  \begin{enumerate}
+    \item Perform disjoint pairwise comparisons and rearrange the array such
+      that the smaller element of each pair appears on the left half of the
+      array, in the same order of its larger counterparts.
+    \item Recursively find the $i$th element among the elements on the left half
+      of the array.
+    \item The $i$th order statistic is among the first $i$ elements of the array
+      and their larger counterparts. Run \textsc{Select} on these $2i$ elements
+      and return the result.
+  \end{enumerate}
+\end{enumerate}
+
+\item Can be proved by substitution.
+
+\item From the previous item, we have
+\[
+  U_i(n) = n + O(T(2i) \lg(n/i)),
+\]
+
+which implies that, when $i$ is a constant less than $n/2$, we have
+\begin{equation*}
+\begin{aligned}
+  U_i(n) &= n + O(T(2i) \lg(n/i))\\
+         &= n + O(O(1) O(\lg n))\\
+         &= n + O(\lg n).
+\end{aligned}
+\end{equation*}
+
+\item If $k > 2$, then $i < n/2$ and we can use the result of item (b):
+\begin{equation*}
+\begin{aligned}
+  U_i(n) &= n + O(T(2i)\lg(n/i))\\
+         &= n = O(T(2n/k) \lg(n/(n/k)))\\
+         &= n = O(T(2n/k) \lg(k)).
+\end{aligned}
+\end{equation*}
+
+If $k = 2$, then $i = n/2$ and $\lg k = 1$. Thus, we have
+\begin{equation*}
+\begin{aligned}
+  U_i(n) &=   T(n)\\
+         &\le n + T(n) + \lg k\\
+         &=   n + O(T(n) + \lg k)\\
+         &=   n + O(T(2n/k) + \lg k).
+\end{aligned}
+\end{equation*}
+
+\end{enumerate}
+\end{framed}
+
+\newpage
+
+\item[9-4]{\textbf{\emph{Alternative analysis of randomized selection}}\\
+In this problem, we use indicator random variables to analyze the
+\textsc{Randomized-Select} procedure in a manner akin to our analysis of
+\textsc{Randomized-Quicksort} in Section 7.4.2.
+
+As in the quicksort analysis, we assume that all elements are distinct, and we
+rename the elements of the input array $A$ as $z_1, z_2, \dots, z_n$, where
+$z_i$ is the $i$th smallest element. Thus, the call
+\textsc{Randomized-Select}($A, 1, n, k$) returns $z_k$.
+
+For $1 \le i < j \le n$, let $X_{ijk}$ = I\{$z_i$ is compared with $z_j$
+sometime during the execution of the algorithm to find $z_k$\}.
+
+\begin{enumerate}
+\item[\textbf{a.}] Give an exact expression for $\text{E}[X_{ijk}]$.
+(\emph{Hint:} Your expression may have different values, depending on the values
+of $i, j,$ and $k$.)
+
+\item[\textbf{b.}] Let $X_k$ denote the total number of comparisons between
+elements of array $A$ when finding $z_k$. Show that
+\[
+  \text{E}[X_k] \le 2 \left( \sum_{i = 1}^{k} \sum_{j = k}^{n} \frac{1}{j - i + 1} +
+                             \sum_{j = k + 1}^{n} \frac{j - k - 1}{j - k + 1} +
+                             \sum_{i = 1}^{k - 2} \frac{k - i - 1}{k - i + 1} \right).
+\]
+
+\item[\textbf{c.}] Show that $\text{E}[X_k] \le 4n$.
+
+\item[\textbf{d.}] Conclude that, assuming all elements of array $A$ are
+distinct, \textsc{Randomized-Select} runs in expected time $O(n)$.
+\end{enumerate}
+}
+
+\begin{framed}
+Skipped.
+\end{framed}
+
+\end{enumerate}
